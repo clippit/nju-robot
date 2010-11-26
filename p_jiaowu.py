@@ -13,7 +13,7 @@ def html_cleanup(html):
 	html = re.sub(r'<(\w+)>[\s|(\xc2\xa0)]*<\/\1>', '', html) #remove all blank tags
 	return html
 	
-def store_data(title, date, content, link):
+def store_data():
 	"save backup to database"
 	con = sqlite3.connect('./db.sqlite')
 	cur = con.cursor()
@@ -22,13 +22,28 @@ def store_data(title, date, content, link):
 	con.commit()
 	con.close()
 
+def update_blog():
+	if u'国际交流' in title:
+		categories = u'国际交流'
+	else:
+		categories = u'教务通知'
+	content_struct = { 'title': title,
+	                   'description': content,
+	                   'categories': [categories],
+	                   'custom_fields': [{'key': 'source', 'value': link}]
+	                 }
+	blog.new_post(content_struct)
+	
+
 
 f = codecs.open('./lastupdate_jiaowu.log', 'r', 'utf-8')
 last_update = f.readlines()
 f.close()
 
+log = open('./log.log', 'a')
 news_list = pq(url='http://jw.nju.edu.cn/root/index.html') ('td#demo1 table table a')
 news_list.make_links_absolute()
+log.write( "%s - jiaowu fetch successful!\n" % (datetime.now(),) )
 
 f = open('./lastupdate_jiaowu.log', 'w')
 for i in range(9, -1, -1):
@@ -54,9 +69,13 @@ for i in range(9, -1, -1):
 			content = u''.join((content, u'</ul>',))
 		print "debug----content:\n%s" % (content)
 		
-		store_data(title, date, content, link)
+		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'jiaowu',' '*29, title.encode("utf-8"), ))
+		
+		store_data()
+		#log.write("%s%s\n" % ( ' '*29, 'save to database successful' ))
+		update_blog()
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')
 f.close()
-
+log.close()
