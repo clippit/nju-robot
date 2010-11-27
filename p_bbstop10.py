@@ -3,7 +3,7 @@
 import codecs, re, sqlite3, urllib2
 from datetime import datetime
 from pyquery import PyQuery as pq
-from multi_update import *
+import multi_update
 
 
 def generate_html(text):
@@ -11,7 +11,7 @@ def generate_html(text):
 	text = text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
 	# Step 2: make <p> and <br />
 	text = text.replace('\r\n', '[-LB-]').replace('\n', '[-LB-]').replace('\r', '[-LB-]')
-	text = text.replace(' ', '&nbsp;')
+	text = text.replace('  ', '&nbsp;&nbsp;')
 	text = re.sub('\s+', ' ', text)
 	text = text.replace('[-LB-][-LB-]', '</p><p>').replace('[-LB-]', '<br />\n')
 	text = ''.join( ('<p>', text, '</p>',) )
@@ -22,7 +22,7 @@ def generate_html(text):
 	text = re.sub(r'\[url\]http\:\/\/(\S+\.)(?i)(gif|jpg|png|jpeg|jp)\[\/url\]',
 	              r'[img]http://\1\2[/img]', text)
 	text = re.sub(r'\[url\](.+?)\[\/url\]', r'<a href="\1" target="_blank">\1</a>', text)
-	text = re.sub(r'\[img\](.+?)\[\/img\]', 	# TODO: 图片是防盗链的，显示会有问题。。。。
+	text = re.sub(r'\[img\](.+?)\[\/img\]',    # TODO: 图片是防盗链的，显示会有问题。。。。
 	              r'<a href="\1" target="_blank"><img alt="" src="\1" /></a>', text)
 	# Step 4: clear ANSI color code
 	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
@@ -38,14 +38,27 @@ def store_data():
 	con.commit()
 	con.close()
 
-def update_blog():
-	content_struct = { 'title': title,
-	                   'description': content,
-	                   'categories': [u'百合十大'],
-	                   'custom_fields': [{'key': 'source', 'value': link},
-	                                     {'key': 'author', 'value': author}]
-	                 }
-	blog.new_post(content_struct)
+def update_wordpress():
+	categories = [u'百合十大']
+	custom_fields = [{'key': 'source', 'value': link}, {'key': 'author', 'value': author}]
+	if multi_update.wordpress_new_post(title, content, categories, custom_fields):
+		print 'Wordpress Update Successful!'
+		log.write( '%s - LilyBBS TOP10 - a new post to wordpress\n' % (datetime.now(),) )
+	else:
+		print 'Wordpress Update Failed!!!!'
+		log.write( '%s - LilyBBS TOP10 - update wordpress failed!!!!!\n' % (datetime.now(),) )
+
+def update_renren():
+	renren_title = ''.join( (u'【百合十大】', title,) )
+	renren_content = ''.join( (u'<p>原文地址：<a href="', link, '" target="_blank">', link, u'</a><br />原帖作者：', author, '</p>', content,) )
+	renren_content = renren_content.replace('\r\n', '').replace('\n', '').replace('\r', '')
+	if multi_update.renren_new_post(renren_title, renren_content):
+		print 'Renren Update Successful!'
+		log.write( '%s - LilyBBS TOP10 - a new post to renren\n' % (datetime.now(),) )
+	else:
+		print 'Renren Update Failed!!!!'
+		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
+
 
 f = codecs.open('./lastupdate_bbstop10.log', 'r', 'utf-8')
 last_update = f.readlines()
@@ -77,7 +90,7 @@ for i in range(0,30,3):
 		page = pq(page) ('textarea').eq(0).text()
 		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
 		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
-		author = search_author.group('id'); #generate the author's id
+		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
 		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
 		datetime_str = search_datetime.group('time').replace('  ', ' 0')
 		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
@@ -87,7 +100,8 @@ for i in range(0,30,3):
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, title.encode("utf-8"), ))
 		
 		store_data()
-		update_blog()
+		update_wordpress()
+		update_renren()
 	
 
 	f.write(title.encode('UTF-8'))

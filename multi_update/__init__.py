@@ -1,15 +1,40 @@
 #!/usr/bin/python
 
-__all__ = ['blog','renren','sina','twitter','douban']
+import urllib2
 
-import pyblog
+def log(source,message):
+	print '%s ERROR: %s' % (source, message)
+	if hasattr(log, 'write'):
+		log.write( '%s - %s ERROR: %s' % (datetime.now(), source.encode('utf-8'), message.encode('utf-8'), ) )
+
+#__all__ = ['blog','renren','sina','twitter','douban']
+
+import pyblog, renren
 
 WORDPRESS_XMLRPC_URL = 'http://localhost/xueshenghui/xmlrpc.php'
 WORDPRESS_USERNAME = 'lilystudio'
 WORDPRESS_PASSWORD = 'lilystudio'
 
-blog = pyblog.WordPress(WORDPRESS_XMLRPC_URL, WORDPRESS_USERNAME, WORDPRESS_PASSWORD)
+def wordpress_new_post( title, content, categories=[], custom_fields=[] ):
+	try:
+		blog = pyblog.WordPress(WORDPRESS_XMLRPC_URL, WORDPRESS_USERNAME, WORDPRESS_PASSWORD)
+		content_struct = { 'title': title,
+		                   'description': content,
+		                   'categories': categories,
+		                   'custom_fields': custom_fields}
+		r = blog.new_post(content_struct)
+	except pyblog.BlogError, e:
+		log('wordpress', e.msg)
+		return False
+	return True
 
-RENREN_USERNAME = 'zlthooray@gmail.com'
-RENREN_PASSWORD = '4c88e832b83178ed608ce7cba0d5a71a'
+
+def renren_new_post(title, content):
+	try:
+		s = renren.login()
+		r = renren.add_blog(title, content, s['session_key'])
+	except urllib2.URLError,e:
+		log('renren',e.reason)
+		return False
+	return True if u'id' in r else False
 

@@ -3,11 +3,12 @@
 import codecs, re, sqlite3
 from datetime import datetime
 from pyquery import PyQuery as pq
-from multi_update import *
+import multi_update
 
 
 def html_cleanup(html):
 	"clean up the markup of jiaowu news"
+	html = html.replace('&#13;','\n')
 	html = re.sub(r'\s(style|lang|class|id|dir|size)="[^"]*"', '', html) #remove style, lang, class, dir properties in markup
 	html = re.sub(r'<\/?(span|font)\s?\/?>', '', html) #remove all <span>
 	html = re.sub(r'<(\w+)>[\s|(\xc2\xa0)]*<\/\1>', '', html) #remove all blank tags
@@ -22,18 +23,29 @@ def store_data():
 	con.commit()
 	con.close()
 
-def update_blog():
+def update_wordpress():
 	if u'国际交流' in title:
-		categories = u'国际交流'
+		categories = [u'国际交流']
 	else:
-		categories = u'教务通知'
-	content_struct = { 'title': title,
-	                   'description': content,
-	                   'categories': [categories],
-	                   'custom_fields': [{'key': 'source', 'value': link}]
-	                 }
-	blog.new_post(content_struct)
-	
+		categories = [u'教务通知']
+	custom_fields = [{'key': 'source', 'value': link}]
+	if multi_update.wordpress_new_post(title, content, categories, custom_fields):
+		print 'Wordpress Update Successful!'
+		log.write( '%s - Jiaowu News - a new post to wordpress\n' % (datetime.now(),) )
+	else:
+		print 'Wordpress Update Failed!!!!'
+		log.write( '%s - Jiaowu News - update wordpress failed!!!!!\n' % (datetime.now(),) )
+
+def update_renren():
+	renren_title = ''.join( (u'【教务处通知】', title,) )
+	renren_content = ''.join( (content, u'<p>原文地址：<a href="', link, '" target="_blank">', link, '</a></p>',) )
+	renren_content = renren_content.replace('\r\n', '').replace('\n', '').replace('\r', '')
+	if multi_update.renren_new_post(renren_title, renren_content):
+		print 'Renren Update Successful!'
+		log.write( '%s - Jiaowu News - a new post to renren\n' % (datetime.now(),) )
+	else:
+		print 'Renren Update Failed!!!!'
+		log.write( '%s - Jiaowu News - update renren failed!!!!!\n' % (datetime.now(),) )
 
 
 f = codecs.open('./lastupdate_jiaowu.log', 'r', 'utf-8')
@@ -73,7 +85,8 @@ for i in range(9, -1, -1):
 		
 		store_data()
 		#log.write("%s%s\n" % ( ' '*29, 'save to database successful' ))
-		update_blog()
+		update_wordpress()
+		update_renren()
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')
