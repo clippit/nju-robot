@@ -1,15 +1,43 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import codecs, re, sqlite3, urllib2, json
+import os, sys, codecs, re, sqlite3, urllib2, json
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
-from p_bbstop10 import generate_html
+
+path = os.path.abspath(os.path.dirname(sys.argv[0]))
+
+################################################################################
+###---###---### The following codes are the same with p_bbstop10 ###---###---###
+def generate_html(text):
+	# Step 1: convert & < > to &amp; &lt; &gt;
+	text = text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+	# Step 2: make <p> and <br />
+	text = text.replace('\r\n', '[-LB-]').replace('\n', '[-LB-]').replace('\r', '[-LB-]')
+	text = text.replace('  ', '&nbsp;&nbsp;')
+	text = re.sub('\s+', ' ', text)
+	text = text.replace('[-LB-][-LB-]', '</p><p>').replace('[-LB-]', '<br />\n')
+	text = ''.join( ('<p>', text, '</p>',) )
+	text = text.replace('<p></p>','').replace('\r\n\r\n','').replace('</p><p>','</p>\n\n<p>')
+	# Step 3: make <img> and <a>
+	text = re.sub(r'(^|[^\"\'\]])(?i)(http|ftp|mms|rstp|news|https)\:\/\/([^\s\033\[\]\"\'\(\)<（）。，]+)',
+	              r'\1[url]\2://\3[/url]', text)
+	text = re.sub(r'\[url\]http\:\/\/(\S+\.)(?i)(gif|jpg|png|jpeg|jp)\[\/url\]',
+	              r'[img]http://\1\2[/img]', text)
+	text = re.sub(r'\[url\](.+?)\[\/url\]', r'<a href="\1" target="_blank">\1</a>', text)
+	text = re.sub(r'\[img\](.+?)\[\/img\]',    # TODO: 图片是防盗链的，显示会有问题。。。。
+	              r'<a href="\1" target="_blank"><img alt="" src="\1" /></a>', text)
+	# Step 4: clear ANSI color code
+	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
+	# Complete!
+	return text
+###---###---###   The above codes are the same with p_bbstop10   ###---###---###
+################################################################################
 
 def store_data():
 	"save backup to database"
-	con = sqlite3.connect('./db.sqlite')
+	con = sqlite3.connect(path+'/db.sqlite')
 	cur = con.cursor()
 	cur.execute( "INSERT INTO lilybbs_event (title, author, content, pub_time, link) VALUES(?, ?, ?, ?, ?)", (title, author, content, time, link) )
 	cur.close()
@@ -18,8 +46,9 @@ def store_data():
 
 def update_wordpress():
 	categories = [u'小百合BBS活动预告']
+	tags = "%s, %s" % ('LilyBBS', board,)
 	custom_fields = [{'key': 'source', 'value': link}, {'key': 'author', 'value': author}]
-	if multi_update.wordpress_new_post(title, content, categories, custom_fields):
+	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - LilyBBS Events - a new post to wordpress\n' % (datetime.now(),) )
 	else:
@@ -39,22 +68,23 @@ def update_renren():
 
 
 
-f = codecs.open('./lastupdate_bbstop10.log', 'r', 'utf-8')
+f = codecs.open(path+'/lastupdate_bbsevent.log', 'r', 'utf-8')
 last_update = f.readlines()
 f.close()
 
-log = open('./log.log', 'a')
+log = open(path+'/log.log', 'a')
 remote_resource = urllib2.urlopen('http://bbs.nju.edu.cn/cache/t_act.js')
 event_str = unicode( remote_resource.read()[10:-25], 'gbk', 'ignore').replace("'",'"').replace('brd:','"brd":').replace('file:','"file":').replace('title:','"title":')
 event_list = json.loads( event_str )
 
 log.write( "%s - LilyBBS Events fetch successful!\n" % (datetime.now(),) )
 
-f = open('./lastupdate_bbsevent.log', 'w')
+f = open(path+'/lastupdate_bbsevent.log', 'w')
 for i in range(0,len(event_list)):
+	board = event_list[i]['brd']
 	title = event_list[i]['title'] 
 	if title+'\n' not in last_update:
-		print title
+		print title.encode('UTF-8')
 		link = ''.join( ('http://bbs.nju.edu.cn/bbstcon?board=', event_list[i]['brd'], '&file=', event_list[i]['file']) ) # generate the thread link
 		
 		################################################################################
@@ -72,7 +102,7 @@ for i in range(0,len(event_list)):
 		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
 		datetime_str = search_datetime.group('time').replace('  ', ' 0')
 		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
-		print '==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time)
+		print ('==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time)).encode('UTF-8')
 		content = generate_html( page[len(header)+1:] )
 		###---###---###   The above codes are the same with p_bbstop10   ###---###---###
 		################################################################################

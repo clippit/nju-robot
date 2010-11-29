@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import codecs, re, sqlite3, urllib2
+import os, sys, codecs, re, sqlite3, urllib2
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
 
+path = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 def generate_html(text):
 	# Step 1: convert & < > to &amp; &lt; &gt;
@@ -32,7 +33,7 @@ def generate_html(text):
 
 def store_data():
 	"save backup to database"
-	con = sqlite3.connect('./db.sqlite')
+	con = sqlite3.connect(path+'/db.sqlite')
 	cur = con.cursor()
 	cur.execute( "INSERT INTO lilybbs_top10 (title, author, content, pub_time, link) VALUES(?, ?, ?, ?, ?)", (title, author, content, time, link) )
 	cur.close()
@@ -41,8 +42,9 @@ def store_data():
 
 def update_wordpress():
 	categories = [u'百合十大']
+	tags = '%s, %s' %('LilyBBS', board, )
 	custom_fields = [{'key': 'source', 'value': link}, {'key': 'author', 'value': author}]
-	if multi_update.wordpress_new_post(title, content, categories, custom_fields):
+	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - LilyBBS TOP10 - a new post to wordpress\n' % (datetime.now(),) )
 	else:
@@ -61,11 +63,11 @@ def update_renren():
 		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
 
 
-f = codecs.open('./lastupdate_bbstop10.log', 'r', 'utf-8')
+f = codecs.open(path+'/lastupdate_bbstop10.log', 'r', 'utf-8')
 last_update = f.readlines()
 f.close()
 
-log = open('./log.log', 'a')
+log = open(path+'/log.log', 'a')
 top10_list = pq(url = 'http://bbs.nju.edu.cn/bbstop10') ('table a')
 
 if len(top10_list) != 30:
@@ -76,9 +78,10 @@ if len(top10_list) != 30:
 top10_list.make_links_absolute()
 log.write( "%s - LilyBBS Top10 fetch successful!\n" % (datetime.now(),) )
 
-f = open('./lastupdate_bbstop10.log', 'w')
+f = open(path+'/lastupdate_bbstop10.log', 'w')
 for i in range(0,30,3):
-	title = "[%s]%s" % ( pq(top10_list[i]).text(), pq(top10_list[i+1]).text(), )
+	board = pq(top10_list[i]).text()
+	title = "[%s]%s" % ( board, pq(top10_list[i+1]).text(), )
 	if title+'\n' not in last_update:
 		#print title
 		link = pq(top10_list[i+1]).attr.href # generate the thread link
@@ -95,7 +98,7 @@ for i in range(0,30,3):
 		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
 		datetime_str = search_datetime.group('time').replace('  ', ' 0')
 		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
-		print '==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time)
+		print ('==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time) ).encode('UTF-8')
 		content = generate_html( page[len(header)+1:] )
 
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, title.encode("utf-8"), ))

@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import codecs, re, sqlite3
+import os, sys, codecs, re, sqlite3
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
 
+path = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 def html_cleanup(html):
 	"clean up the markup of jiaowu news"
@@ -17,7 +18,7 @@ def html_cleanup(html):
 	
 def store_data():
 	"save backup to database"
-	con = sqlite3.connect('./db.sqlite')
+	con = sqlite3.connect(path+'/db.sqlite')
 	cur = con.cursor()
 	cur.execute( "INSERT INTO jiaowu (title, date, content, link) VALUES(?, ?, ?, ?)", (title, date, content, link) )
 	cur.close()
@@ -30,7 +31,7 @@ def update_wordpress():
 	else:
 		categories = [u'教务通知']
 	custom_fields = [{'key': 'source', 'value': link}]
-	if multi_update.wordpress_new_post(title, content, categories, custom_fields):
+	if multi_update.wordpress_new_post(title, content, categories,'' , custom_fields):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - Jiaowu News - a new post to wordpress\n' % (datetime.now(),) )
 	else:
@@ -49,21 +50,21 @@ def update_renren():
 		log.write( '%s - Jiaowu News - update renren failed!!!!!\n' % (datetime.now(),) )
 
 
-f = codecs.open('./lastupdate_jiaowu.log', 'r', 'utf-8')
+f = codecs.open(path+'/lastupdate_jiaowu.log', 'r', 'utf-8')
 last_update = f.readlines()
 f.close()
 
-log = open('./log.log', 'a')
+log = open(path+'/log.log', 'a')
 news_list = pq(url='http://jw.nju.edu.cn/root/index.html') ('td#demo1 table table a')
 news_list.make_links_absolute()
 log.write( "%s - jiaowu fetch successful!\n" % (datetime.now(),) )
 
-f = open('./lastupdate_jiaowu.log', 'w')
+f = open(path+'/lastupdate_jiaowu.log', 'w')
 for i in range(9, -1, -1):
 	news = pq(news_list[i])
 	title = news.attr.title # generate the title
 	if title+'\n' not in last_update: # start updating
-		print title
+		print title.encode('UTF-8')
 		print '============================='
 		link = news.attr.href
 		d = pq(url = link)
@@ -80,7 +81,7 @@ for i in range(9, -1, -1):
 				a = pq(e)
 				content = u''.join((content, '<li><a href="', a.attr.href, '">', a.text(), '</a></li>', ))
 			content = u''.join((content, u'</ul>',))
-		print "debug----content:\n%s" % (content)
+		#print "debug----content:\n%s" % (content)
 		
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'jiaowu',' '*29, title.encode("utf-8"), ))
 		
