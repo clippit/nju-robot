@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding:utf-8 -*-
 
 import urllib2, urllib, hashlib, json
@@ -8,8 +9,12 @@ API_URL = 'http://m1.api.renren.com/restserver.do'
 API_KEY = 'db1ffe772f504e9790907be9c9a651c7'
 SECRET_KEY = 'a13bb175bc1940f6b78807e58329264f'
 
-RENREN_USERNAME = 'wxing123'
-RENREN_PASSWORD = '71c1ebc28e10a4acea02f8ffb28ee54f'
+# TEST ACCOUNT
+#RENREN_USERNAME = 'wxing123'
+#RENREN_PASSWORD = '71c1ebc28e10a4acea02f8ffb28ee54f'
+
+RENREN_USERNAME = 'njulilystudio@126.com'
+RENREN_PASSWORD = '2d41d2433df7f8090af29a76c1d4822c'
 
 
 def unicode_urlencode(params):

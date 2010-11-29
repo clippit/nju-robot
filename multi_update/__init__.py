@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding:utf-8 -*-
 
 import urllib2
 
@@ -30,6 +31,7 @@ def wordpress_new_post( title, content, categories=[], custom_fields=[] ):
 
 
 def renren_new_post(title, content):
+	content = ''.join( (content, '<p style="color:#3090C7;font-weight:bold;">更多精彩，敬请关注汇聚南大：<a href="http://njulily.com" target="_blank">http://njulily.com</a>！</p>',) )
 	try:
 		s = renren.login()
 		r = renren.add_blog(title, content, s['session_key'])
