@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os, sys, codecs, re, sqlite3, urllib2
+import os, sys, codecs, re, sqlite3, urllib2, urllib
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
@@ -49,7 +49,7 @@ def store_data():
 def update_wordpress():
 	categories = [u'百合十大']
 	tags = '%s, %s' %('LilyBBS', board, )
-	custom_fields = [{'key': 'source', 'value': link}, {'key': 'author', 'value': author}]
+	custom_fields = [{'key': 'source', 'value': friendly_link}, {'key': 'author', 'value': author}]
 	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - LilyBBS TOP10 - a new post to wordpress\n' % (datetime.now(),) )
@@ -59,7 +59,7 @@ def update_wordpress():
 
 def update_renren():
 	renren_title = ''.join( (u'【百合十大】', title,) )
-	renren_content = ''.join( (u'<p>原文地址：<a href="', link, '" target="_blank">', link, u'</a><br />原帖作者：', author, '</p>', content,) )
+	renren_content = ''.join( (u'<p>原文地址：<a href="', friendly_link, '" target="_blank">', friendly_link, u'</a><br />原帖作者：', author, '</p>', content,) )
 	renren_content = renren_content.replace('\r\n', '').replace('\n', '').replace('\r', '')
 	if multi_update.renren_new_post(renren_title, renren_content):
 		print 'Renren Update Successful!'
@@ -69,7 +69,7 @@ def update_renren():
 		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
 
 def update_sina():
-	content = ''.join( (u'【百合十大】', title, ' ', link, ) )
+	content = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
 	if multi_update.sina_new_microblog(content):
 		print 'Sina Microblog Update Succesful!'
 		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
@@ -99,7 +99,8 @@ for i in range(0,30,3):
 	title = "[%s]%s" % ( board, pq(top10_list[i+1]).text(), )
 	if title+'\n' not in last_update:
 		#print title
-		link = pq(top10_list[i+1]).attr.href # generate the thread link
+		link = pq(top10_list[i+1]).attr.href
+		friendly_link = ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) )# generate the thread link
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
 		#------UPDATE: move to read_url function------
 		#page = urllib2.urlopen(link).read()
@@ -124,6 +125,7 @@ for i in range(0,30,3):
 		store_data()
 		update_wordpress()
 		update_renren()
+		update_sina()
 	
 
 	f.write(title.encode('UTF-8'))

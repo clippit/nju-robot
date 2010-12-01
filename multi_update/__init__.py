@@ -17,9 +17,9 @@ WORDPRESS_USERNAME = 'lilybot'
 WORDPRESS_PASSWORD = 'imabot123'
 
 # TEST ACCOUNT
-WORDPRESS_XMLRPC_URL = 'http://localhost/xueshenghui/xmlrpc.php'
-WORDPRESS_USERNAME = 'lilystudio'
-WORDPRESS_PASSWORD = 'lilystudio'
+#WORDPRESS_XMLRPC_URL = 'http://localhost/xueshenghui/xmlrpc.php'
+#WORDPRESS_USERNAME = 'lilystudio'
+#WORDPRESS_PASSWORD = 'lilystudio'
 
 def wordpress_new_post( title, content, categories=[], tags='', custom_fields=[] ):
 	try:

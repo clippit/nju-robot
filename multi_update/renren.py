@@ -13,8 +13,8 @@ RENREN_USERNAME = 'njulilystudio@126.com'
 RENREN_PASSWORD = '2d41d2433df7f8090af29a76c1d4822c'
 
 # TEST ACCOUNT
-RENREN_USERNAME = 'wxing123'
-RENREN_PASSWORD = '71c1ebc28e10a4acea02f8ffb28ee54f'
+#RENREN_USERNAME = 'wxing123'
+#RENREN_PASSWORD = '71c1ebc28e10a4acea02f8ffb28ee54f'
 
 
 def unicode_urlencode(params):

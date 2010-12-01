@@ -98,6 +98,7 @@ for i in range(9, -1, -1):
 		#log.write("%s%s\n" % ( ' '*29, 'save to database successful' ))
 		update_wordpress()
 		update_renren()
+		update_sina()
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')

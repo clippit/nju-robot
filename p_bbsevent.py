@@ -53,7 +53,7 @@ def store_data():
 def update_wordpress():
 	categories = [u'小百合BBS活动预告']
 	tags = "%s, %s" % ('LilyBBS', board,)
-	custom_fields = [{'key': 'source', 'value': link}, {'key': 'author', 'value': author}]
+	custom_fields = [{'key': 'source', 'value': friendly_link}, {'key': 'author', 'value': author}]
 	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - LilyBBS Events - a new post to wordpress\n' % (datetime.now(),) )
@@ -63,7 +63,7 @@ def update_wordpress():
 
 def update_renren():
 	renren_title = ''.join( (u'【小百合BBS活动预告】', title,) )
-	renren_content = ''.join( (u'<p>原文地址：<a href="', link, '" target="_blank">', link, u'</a><br />原帖作者：', author, '</p>', content,) )
+	renren_content = ''.join( (u'<p>原文地址：<a href="', friendly_link, '" target="_blank">', friendly_link, u'</a><br />原帖作者：', author, '</p>', content,) )
 	renren_content = renren_content.replace('\r\n', '').replace('\n', '').replace('\r', '')
 	if multi_update.renren_new_post(renren_title, renren_content):
 		print 'Renren Update Successful!'
@@ -73,7 +73,7 @@ def update_renren():
 		log.write( '%s - LilyBBS Events - update renren failed!!!!!\n' % (datetime.now(),) )
 
 def update_sina():
-	content = ''.join( (u'【小百合BBS活动预告】', title, ' ', link, ) )
+	content = ''.join( (u'【小百合BBS活动预告】', title, ' ', friendly_link, ) )
 	if multi_update.sina_new_microblog(content):
 		print 'Sina Microblog Update Succesful!'
 		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
@@ -99,8 +99,8 @@ for i in range(0,len(event_list)):
 	title = event_list[i]['title'] 
 	if title+'\n' not in last_update:
 		print title.encode('UTF-8')
-		link = ''.join( ('http://bbs.nju.edu.cn/bbstcon?board=', event_list[i]['brd'], '&file=', event_list[i]['file']) ) # generate the thread link
-		
+		link = ''.join( ('http://bbs.nju.edu.cn/bbstcon?board=', event_list[i]['brd'], '&file=', event_list[i]['file']) )
+		friendly_link = ''.join( ('http://bbs.nju.edu.cn/main.html?bbstcon%3Fboard%3D', event_list[i]['brd'], '%26file%3D', event_list[i]['file'], ) ) # generate the thread link
 		################################################################################
 		###---###---### The following codes are the same with p_bbstop10 ###---###---###
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
@@ -129,6 +129,7 @@ for i in range(0,len(event_list)):
 		store_data()
 		update_wordpress()
 		update_renren()
+		update_sina()
 		
 		
 	f.write(title.encode('UTF-8'))
