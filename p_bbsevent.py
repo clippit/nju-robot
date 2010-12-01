@@ -32,6 +32,12 @@ def generate_html(text):
 	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
 	# Complete!
 	return text
+
+def read_url(url):
+	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
+	page = urllib2.urlopen(url).read().replace('\033','')
+	page = unicode(page, 'gbk', 'ignore') 
+	return page
 ###---###---###   The above codes are the same with p_bbstop10   ###---###---###
 ################################################################################
 
@@ -66,6 +72,14 @@ def update_renren():
 		print 'Renren Update Failed!!!!'
 		log.write( '%s - LilyBBS Events - update renren failed!!!!!\n' % (datetime.now(),) )
 
+def update_sina():
+	content = ''.join( (u'【小百合BBS活动预告】', title, ' ', link, ) )
+	if multi_update.sina_new_microblog(content):
+		print 'Sina Microblog Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
+	else:
+		print 'Sina Microblog Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update sina microblog failed!!!!!\n' % (datetime.now(),) )
 
 
 f = codecs.open(path+'/lastupdate_bbsevent.log', 'r', 'utf-8')
@@ -90,12 +104,15 @@ for i in range(0,len(event_list)):
 		################################################################################
 		###---###---### The following codes are the same with p_bbstop10 ###---###---###
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
-		page = urllib2.urlopen(link).read()
-		page = unicode(page, 'gbk', 'ignore') 
+		#------UPDATE: move to read_url function------
+		#page = urllib2.urlopen(link).read()
+		#page = unicode(page, 'gbk', 'ignore') 
+		#if page[page.find(u'发信站')-1] != '\n':
+		#	page = page.replace(u'发信站:', u'\n发信站:')
+		### end
+		page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
-		### end
-		page = pq(page) ('textarea').eq(0).text()
 		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
 		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
 		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id

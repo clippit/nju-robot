@@ -30,6 +30,12 @@ def generate_html(text):
 	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
 	# Complete!
 	return text
+	
+def read_url(url):
+	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
+	page = urllib2.urlopen(url).read().replace('\033','')
+	page = unicode(page, 'gbk', 'ignore') 
+	return page
 
 def store_data():
 	"save backup to database"
@@ -62,13 +68,22 @@ def update_renren():
 		print 'Renren Update Failed!!!!'
 		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
 
+def update_sina():
+	content = ''.join( (u'【百合十大】', title, ' ', link, ) )
+	if multi_update.sina_new_microblog(content):
+		print 'Sina Microblog Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
+	else:
+		print 'Sina Microblog Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update sina microblog failed!!!!!\n' % (datetime.now(),) )
+
 
 f = codecs.open(path+'/lastupdate_bbstop10.log', 'r', 'utf-8')
 last_update = f.readlines()
 f.close()
 
 log = open(path+'/log.log', 'a')
-top10_list = pq(url = 'http://bbs.nju.edu.cn/bbstop10') ('table a')
+top10_list = pq(url = 'http://bbs.nju.edu.cn/bbstop10', opener=read_url) ('table a')
 
 if len(top10_list) != 30:
 	log.write( "%s - LilyBBS TOP10 fetch error!\n" % (datetime.now(),) )
@@ -86,12 +101,15 @@ for i in range(0,30,3):
 		#print title
 		link = pq(top10_list[i+1]).attr.href # generate the thread link
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
-		page = urllib2.urlopen(link).read()
-		page = unicode(page, 'gbk', 'ignore') 
+		#------UPDATE: move to read_url function------
+		#page = urllib2.urlopen(link).read()
+		#page = unicode(page, 'gbk', 'ignore') 
+		#if page[page.find(u'发信站')-1] != '\n':
+		#	page = page.replace(u'发信站:', u'\n发信站:')
+		### end
+		page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
-		### end
-		page = pq(page) ('textarea').eq(0).text()
 		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
 		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
 		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id

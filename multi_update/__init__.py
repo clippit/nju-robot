@@ -10,7 +10,7 @@ def log(source,message):
 
 #__all__ = ['blog','renren','sina','twitter','douban']
 
-import pyblog, renren
+import pyblog, renren, sina
 
 WORDPRESS_XMLRPC_URL = 'http://njulily.com/xmlrpc.php'
 WORDPRESS_USERNAME = 'lilybot'
@@ -46,3 +46,10 @@ def renren_new_post(title, content):
 		return False
 	return True if u'id' in r else False
 
+def sina_new_microblog(content):
+	try:
+		r = sina.update(content)
+	except urllib2.URLError,e:
+		log('renren',e.reason)
+		return False
+	return True

@@ -49,6 +49,15 @@ def update_renren():
 		print 'Renren Update Failed!!!!'
 		log.write( '%s - Jiaowu News - update renren failed!!!!!\n' % (datetime.now(),) )
 
+def update_sina():
+	content = ''.join( (u'【教务处通知】', title, ' ', link, ) )
+	if multi_update.sina_new_microblog(content):
+		print 'Sina Microblog Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
+	else:
+		print 'Sina Microblog Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update sina microblog failed!!!!!\n' % (datetime.now(),) )
+
 
 f = codecs.open(path+'/lastupdate_jiaowu.log', 'r', 'utf-8')
 last_update = f.readlines()
