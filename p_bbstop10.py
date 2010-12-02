@@ -1,20 +1,19 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os, sys, codecs, re, sqlite3, urllib2, urllib
+import os, sys, codecs, re, sqlite3, urllib2, urllib, base64
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
 
 path = os.path.abspath(os.path.dirname(sys.argv[0]))
+GET_IMAGE = 'http://njulily.com/getimg.php?r='
 
 def generate_html(text):
 	# Step 1: convert & < > to &amp; &lt; &gt;
 	text = text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
 	# Step 2: make <p> and <br />
 	text = text.replace('\r\n', '[-LB-]').replace('\n', '[-LB-]').replace('\r', '[-LB-]')
-	text = text.replace('  ', '&nbsp;&nbsp;')
-	text = re.sub('\s+', ' ', text)
 	text = text.replace('[-LB-][-LB-]', '</p><p>').replace('[-LB-]', '<br />\n')
 	text = ''.join( ('<p>', text, '</p>',) )
 	text = text.replace('<p></p>','').replace('\r\n\r\n','').replace('</p><p>','</p>\n\n<p>')
@@ -26,6 +25,8 @@ def generate_html(text):
 	text = re.sub(r'\[url\](.+?)\[\/url\]', r'<a href="\1" target="_blank">\1</a>', text)
 	text = re.sub(r'\[img\](.+?)\[\/img\]',    # TODO: 图片是防盗链的，显示会有问题。。。。
 	              r'<a href="\1" target="_blank"><img alt="" src="\1" /></a>', text)
+	text = text.replace('  ', '&nbsp;&nbsp;')
+	text = re.sub('\s+', ' ', text)              
 	# Step 4: clear ANSI color code
 	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
 	# Complete!
@@ -46,13 +47,19 @@ def store_data():
 	con.commit()
 	con.close()
 
-
 def db_fetch(count=5):
 	"get the latest several titles in database"
 	pass
 	#con = sqlite3.connect(path+'/db.sqlite')
 	#cur = con.cursor()
-	
+
+def encode_url(match):
+	url = urllib.pathname2url( base64.b64encode(match.group(1)) )
+	return ''.join( ('<img alt="" src="', GET_IMAGE, url, '"') )
+
+def image_proxy(text):
+	return re.sub(r'<img alt="" src="([^"]+)"', encode_url, text)
+
 def update_wordpress():
 	categories = [u'百合十大']
 	tags = '%s, %s' %('LilyBBS', board, )
@@ -66,7 +73,7 @@ def update_wordpress():
 
 def update_renren():
 	renren_title = ''.join( (u'【百合十大】', title,) )
-	renren_content = ''.join( (u'<p>原文地址：<a href="', friendly_link, '" target="_blank">', friendly_link, u'</a><br />原帖作者：', author, '</p>', content,) )
+	renren_content = ''.join( (u'<p>原文地址：<a href="', friendly_link, '" target="_blank">', friendly_link, u'</a><br />原帖作者：', author, '</p>', image_proxy(content),) )
 	renren_content = renren_content.replace('\r\n', '').replace('\n', '').replace('\r', '')
 	if multi_update.renren_new_post(renren_title, renren_content):
 		print 'Renren Update Successful!'
