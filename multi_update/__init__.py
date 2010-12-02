@@ -50,6 +50,15 @@ def sina_new_microblog(content):
 	try:
 		r = sina.update(content)
 	except urllib2.URLError,e:
-		log('renren',e.reason)
+		log('sina',e.reason)
 		return False
 	return True
+
+def douban_new_recommendation(title, excerpt, link):
+	try:
+		douban.add_recommendation(title, excerpt, link)
+	except urllib2.URLError,e:
+		log('douban',e.reason)
+		return False
+	return True
+	

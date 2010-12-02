@@ -58,6 +58,16 @@ def update_sina():
 		print 'Sina Microblog Update Failed!!!'
 		log.write( '%s - LilyBBS TOP10 - update sina microblog failed!!!!!\n' % (datetime.now(),) )
 
+def update_douban():
+	douban_title = ''.join( (u'【教务处通知】', title,) )
+	douban_text = pq(content).text()[:100]
+	if multi_update.douban_new_recommendation(douban_title, douban_text, link):
+		print 'Douban Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new recommendation to douban\n' % (datetime.now(),) )
+	else:
+		print 'Douban Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update douban recommendation failed!!!!!\n' % (datetime.now(),) )
+
 
 f = codecs.open(path+'/lastupdate_jiaowu.log', 'r', 'utf-8')
 last_update = f.readlines()
@@ -99,6 +109,7 @@ for i in range(9, -1, -1):
 		update_wordpress()
 		update_renren()
 		update_sina()
+		update_douban()
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')

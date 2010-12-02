@@ -69,13 +69,23 @@ def update_renren():
 		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
 
 def update_sina():
-	content = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
-	if multi_update.sina_new_microblog(content):
+	tweet = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
+	if multi_update.sina_new_microblog(tweet):
 		print 'Sina Microblog Update Succesful!'
 		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
 	else:
 		print 'Sina Microblog Update Failed!!!'
 		log.write( '%s - LilyBBS TOP10 - update sina microblog failed!!!!!\n' % (datetime.now(),) )
+
+def update_douban():
+	douban_title = ''.join( (u'【百合十大】', title,) )
+	douban_text = pq(content).text()[:100]
+	if multi_update.douban_new_recommendation(douban_title, douban_text, friendly_link):
+		print 'Douban Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new recommendation to douban\n' % (datetime.now(),) )
+	else:
+		print 'Douban Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update douban recommendation failed!!!!!\n' % (datetime.now(),) )
 
 
 f = codecs.open(path+'/lastupdate_bbstop10.log', 'r', 'utf-8')
@@ -126,6 +136,7 @@ for i in range(0,30,3):
 		update_wordpress()
 		update_renren()
 		update_sina()
+		update_douban()
 	
 
 	f.write(title.encode('UTF-8'))
