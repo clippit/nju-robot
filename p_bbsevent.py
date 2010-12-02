@@ -136,11 +136,14 @@ for i in range(0,len(event_list)):
 		
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS Events',' '*29, title.encode("utf-8"), ))
 		
-		store_data()
-		update_wordpress()
-		update_renren()
-		update_sina()
-		update_douban()
+		try:
+			store_data()
+			update_wordpress()
+			update_renren()
+			update_sina()
+			update_douban()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS Events',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 		
 		
 	f.write(title.encode('UTF-8'))

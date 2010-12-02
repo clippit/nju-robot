@@ -46,6 +46,13 @@ def store_data():
 	con.commit()
 	con.close()
 
+
+def db_fetch(count=5):
+	"get the latest several titles in database"
+	pass
+	#con = sqlite3.connect(path+'/db.sqlite')
+	#cur = con.cursor()
+	
 def update_wordpress():
 	categories = [u'百合十大']
 	tags = '%s, %s' %('LilyBBS', board, )
@@ -132,11 +139,14 @@ for i in range(0,30,3):
 
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, title.encode("utf-8"), ))
 		
-		store_data()
-		update_wordpress()
-		update_renren()
-		update_sina()
-		update_douban()
+		try:
+			store_data()
+			update_wordpress()
+			update_renren()
+			update_sina()
+			update_douban()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 	
 
 	f.write(title.encode('UTF-8'))

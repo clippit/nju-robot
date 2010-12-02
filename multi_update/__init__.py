@@ -10,7 +10,7 @@ def log(source,message):
 
 #__all__ = ['blog','renren','sina','twitter','douban']
 
-import pyblog, renren, sina
+import pyblog, renren, sina, douban
 
 WORDPRESS_XMLRPC_URL = 'http://njulily.com/xmlrpc.php'
 WORDPRESS_USERNAME = 'lilybot'
@@ -44,6 +44,9 @@ def renren_new_post(title, content):
 	except urllib2.URLError,e:
 		log('renren',e.reason)
 		return False
+	except urllib2.HTTPError,e:
+		log('renren',e.code)
+		return False
 	return True if u'id' in r else False
 
 def sina_new_microblog(content):
@@ -52,6 +55,9 @@ def sina_new_microblog(content):
 	except urllib2.URLError,e:
 		log('sina',e.reason)
 		return False
+	except urllib2.HTTPError,e:
+		log('sina',e.code)
+		return False
 	return True
 
 def douban_new_recommendation(title, excerpt, link):
@@ -59,6 +65,9 @@ def douban_new_recommendation(title, excerpt, link):
 		douban.add_recommendation(title, excerpt, link)
 	except urllib2.URLError,e:
 		log('douban',e.reason)
+		return False
+	except urllib2.HTTPError,e:
+		log('douban',e.code)
 		return False
 	return True
 	

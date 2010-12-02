@@ -24,8 +24,9 @@ def add_recommendation(title, excerpt, link):
         <db:attribute name="comment">%s</db:attribute>
         <link href="%s" rel="related" />
 </entry>''' % (title, excerpt, link)
+	print postdata.encode('UTF-8')
 	header = get_request_header(URL_RECOMMENDATIONS, 'POST')
 	req = urllib2.Request(URL_RECOMMENDATIONS, postdata.encode('UTF-8'), header)
 	req.add_header('Content-Type', 'application/atom+xml')
 	req.add_header('User-Agent', '')
-	urllib2.urlopen(req)
+	response = urllib2.urlopen(req)

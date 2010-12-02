@@ -104,12 +104,14 @@ for i in range(9, -1, -1):
 		
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'jiaowu',' '*29, title.encode("utf-8"), ))
 		
-		store_data()
-		#log.write("%s%s\n" % ( ' '*29, 'save to database successful' ))
-		update_wordpress()
-		update_renren()
-		update_sina()
-		update_douban()
+		try:
+			store_data()
+			update_wordpress()
+			update_renren()
+			update_sina()
+			update_douban()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'JiaoWu News',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')
