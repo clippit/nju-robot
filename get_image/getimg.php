@@ -35,7 +35,9 @@ if (preg_match('/^http:\/\/bbs\.nju\.edu\.cn/', $url)) {
 		$filename = get_filename($url);
 		$img_content = fetch_bbs_image($url);
 		file_put_contents($filename, $img_content);
-		smart_resize_image($filename, 550, 550, true);
+		if ($type == 'image/png' || $type == 'image/jpeg') {
+			smart_resize_image($filename, 550, 550, true);
+		}	
 		echo file_get_contents($filename);
 		exit();
 	}
@@ -63,6 +65,7 @@ function fetch_bbs_image($url) {
 
 /**
  * Smart Image Resizing while Preserving Transparency With PHP and GD Library
+ * small modified by @author clippit
  * 
  * @author Maxim Chernyak
  * @link http://mediumexposure.com/smart-image-resizing-while-preserving-transparency-php-and-gd-library/
@@ -74,6 +77,11 @@ function smart_resize_image($file, $width = 0, $height = 0, $proportional = fals
 	
 	$info = getimagesize($file);
 	$image = '';
+	
+	if ($info [0] <= $width || $info [1] <= $height) {
+		// if the original image is too small to the target width and height, then do not zoom in
+		return false;
+	}
 	
 	$final_width = 0;
 	$final_height = 0;
@@ -130,7 +138,7 @@ function smart_resize_image($file, $width = 0, $height = 0, $proportional = fals
 			imagecolortransparent($image_resized, $trnprt_indx);
 		
 		} // Always make a transparent background color for PNGs that don't have one allocated already
-		elseif ($info [2] == IMAGETYPE_PNG) {
+elseif ($info [2] == IMAGETYPE_PNG) {
 			
 			// Turn off transparency blending (temporarily)
 			imagealphablending($image_resized, false);
