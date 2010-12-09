@@ -49,9 +49,14 @@ def store_data():
 
 def db_fetch(count=5):
 	"get the latest several titles in database"
-	pass
-	#con = sqlite3.connect(path+'/db.sqlite')
-	#cur = con.cursor()
+	con = sqlite3.connect(path+'/db.sqlite')
+	cur = con.cursor()
+	cur.execute( "SELECT id, title FROM lilybbs_top10 ORDER BY id DESC LIMIT ?", (count,) )
+	result = cur.fetchall()
+	cur.close()
+	con.close()
+	return [result[i][1] for i in range(count)]
+
 
 def encode_url(match):
 	url = urllib.pathname2url( base64.b64encode(match.group(1)) )
@@ -104,6 +109,7 @@ def update_douban():
 
 f = codecs.open(path+'/lastupdate_bbstop10.log', 'r', 'utf-8')
 last_update = f.readlines()
+last_update = [last_update[i][:-1] for i in range( len(last_update) )]
 f.close()
 
 log = open(path+'/log.log', 'a')
@@ -121,7 +127,7 @@ f = open(path+'/lastupdate_bbstop10.log', 'w')
 for i in range(0,30,3):
 	board = pq(top10_list[i]).text()
 	title = "[%s]%s" % ( board, pq(top10_list[i+1]).text(), )
-	if title+'\n' not in last_update:
+	if title not in last_update+db_fetch():
 		#print title
 		link = pq(top10_list[i+1]).attr.href
 		friendly_link = ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) )# generate the thread link
@@ -142,7 +148,7 @@ for i in range(0,30,3):
 		datetime_str = search_datetime.group('time').replace('  ', ' 0')
 		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
 		print ('==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time) ).encode('UTF-8')
-		content = generate_html( page[len(header)+1:] )
+		content = generate_html( page[len(header):] )
 
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, title.encode("utf-8"), ))
 		
