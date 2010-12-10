@@ -4,7 +4,7 @@
 import urllib2, urllib
 import oauth
 
-# User ID: 47795365
+# Username: NJUlily
 CONSUMER_KEY = oauth.OAuthConsumer('rs7lclE1VGhHgcWeKCoYsw', 'WzDfqSYV5xmTTbQpsJFKuhVhbBYLxdbmi1Y6slf6k')
 TOKEN = oauth.OAuthToken('224662102-92AHuYAj8t9i66ACWgC5t9eHCCZdN53XNdLj63ko', 'd3BhKIdrvPr09lcuDay49VglHV5wLPESD0GpmyzOj8')
 URL_STATUES_UPDATE = 'http://api.twitter.com/1/statuses/update.json'

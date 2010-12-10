@@ -57,7 +57,6 @@ def db_fetch(count=5):
 	con.close()
 	return [result[i][1] for i in range(count)]
 
-
 def encode_url(match):
 	url = urllib.pathname2url( base64.b64encode(match.group(1)) )
 	return ''.join( ('<img alt="" src="', GET_IMAGE, url, '"') )
@@ -106,6 +105,14 @@ def update_douban():
 		print 'Douban Update Failed!!!'
 		log.write( '%s - LilyBBS TOP10 - update douban recommendation failed!!!!!\n' % (datetime.now(),) )
 
+def update_twitter():
+	status = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
+	if multi_update.twitter_new_status(status):
+		print 'Twitter Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new tweet to twitter\n' % (datetime.now(),) )
+	else:
+		print 'Twitter Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update twitter failed!!!!!\n' % (datetime.now(),) )
 
 f = codecs.open(path+'/lastupdate_bbstop10.log', 'r', 'utf-8')
 last_update = f.readlines()
@@ -158,6 +165,7 @@ for i in range(0,30,3):
 			update_renren()
 			update_sina()
 			update_douban()
+			update_twitter():
 		except:
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 	

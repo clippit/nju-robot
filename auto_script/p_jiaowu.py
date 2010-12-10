@@ -68,6 +68,15 @@ def update_douban():
 		print 'Douban Update Failed!!!'
 		log.write( '%s - LilyBBS TOP10 - update douban recommendation failed!!!!!\n' % (datetime.now(),) )
 
+def update_twitter():
+	status = ''.join( (u'【教务处通知】', title, ' ', link, ) )
+	if multi_update.twitter_new_status(status):
+		print 'Twitter Update Succesful!'
+		log.write( '%s - LilyBBS TOP10 - a new tweet to twitter\n' % (datetime.now(),) )
+	else:
+		print 'Twitter Update Failed!!!'
+		log.write( '%s - LilyBBS TOP10 - update twitter failed!!!!!\n' % (datetime.now(),) )
+
 
 f = codecs.open(path+'/lastupdate_jiaowu.log', 'r', 'utf-8')
 last_update = f.readlines()
@@ -110,6 +119,7 @@ for i in range(9, -1, -1):
 			update_renren()
 			update_sina()
 			update_douban()
+			update_twitter()
 		except:
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'JiaoWu News',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 		

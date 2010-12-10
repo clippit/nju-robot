@@ -3,14 +3,14 @@
 
 import urllib2
 
-def log(source,message):
+def log(source, message):
 	print ('%s ERROR: %s' % (source, message)).encode('UTF-8')
 	if hasattr(log, 'write'):
 		log.write( '%s - %s ERROR: %s' % (datetime.now(), source.encode('utf-8'), message.encode('utf-8'), ) )
 
 #__all__ = ['blog','renren','sina','twitter','douban']
 
-import pyblog, renren, sina, douban
+import pyblog, renren, sina, douban, twitter
 
 WORDPRESS_XMLRPC_URL = 'http://njulily.com/xmlrpc.php'
 WORDPRESS_USERNAME = 'lilybot'
@@ -70,4 +70,14 @@ def douban_new_recommendation(title, excerpt, link):
 		log('douban',e.code)
 		return False
 	return True
-	
+
+def twitter_new_status(content):
+	try;
+		twitter.status_update(content)
+	except urllib2.URLError,e:
+		log('twitter',e.reason)
+		return False
+	except urllib2.HTTPError.e:
+		log('twitter',e.code)
+		return False
+	return True
