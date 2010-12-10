@@ -127,7 +127,7 @@ for i in range(0,len(event_list)):
 	if title+'\n' not in last_update:
 		print title.encode('UTF-8')
 		link = ''.join( ('http://bbs.nju.edu.cn/bbstcon?board=', event_list[i]['brd'], '&file=', event_list[i]['file']) )
-		friendly_link = ''.join( ('http://bbs.nju.edu.cn/main.html?bbstcon%3Fboard%3D', event_list[i]['brd'], '%26file%3D', event_list[i]['file'], ) ) # generate the thread link
+		friendly_link = multi_update.short_url( ''.join( ('http://bbs.nju.edu.cn/main.html?bbstcon%3Fboard%3D', event_list[i]['brd'], '%26file%3D', event_list[i]['file'], ) ) ) # generate the thread link
 		################################################################################
 		###---###---### The following codes are the same with p_bbstop10 ###---###---###
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!

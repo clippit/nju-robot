@@ -8,6 +8,12 @@ def log(source, message):
 	if hasattr(log, 'write'):
 		log.write( '%s - %s ERROR: %s' % (datetime.now(), source.encode('utf-8'), message.encode('utf-8'), ) )
 
+URL_SHORTER_API = 'http://s.njulily.com/api.php?url='
+def short_url(url):
+	re = urllib2.urlopen('%s%s' % (URL_SHORTER_API, url,))
+	return re.read()
+
+
 #__all__ = ['blog','renren','sina','twitter','douban']
 
 import pyblog, renren, sina, douban, twitter
@@ -72,7 +78,7 @@ def douban_new_recommendation(title, excerpt, link):
 	return True
 
 def twitter_new_status(content):
-	try;
+	try:
 		twitter.status_update(content)
 	except urllib2.URLError,e:
 		log('twitter',e.reason)

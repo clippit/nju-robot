@@ -137,7 +137,7 @@ for i in range(0,30,3):
 	if title not in last_update+db_fetch():
 		#print title
 		link = pq(top10_list[i+1]).attr.href
-		friendly_link = ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) )# generate the thread link
+		friendly_link = multi_update.short_url( ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) ) )# generate the thread link
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
 		#------UPDATE: move to read_url function------
 		#page = urllib2.urlopen(link).read()
@@ -165,7 +165,7 @@ for i in range(0,30,3):
 			update_renren()
 			update_sina()
 			update_douban()
-			update_twitter():
+			update_twitter()
 		except:
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 	
