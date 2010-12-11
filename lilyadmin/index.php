@@ -17,7 +17,7 @@ if (! isset ( $_REQUEST ['action'] ) || empty ( $_REQUEST ['action'] )) { //defa
 		$db = new DB ();
 		$uid = $db->is_user_exist ( $user_name, $pwd );
 		if ($uid > 0) {
-			session_start ();
+			@session_start ();
 			$_SESSION ['uid'] = $uid;
 			$view = new EditorView ();
 		} else {
@@ -107,8 +107,6 @@ function auth() {
 	if (isset ( $_SESSION ['uid'] ) && (! empty ( $_SESSION ['uid'] ))) {
 		return true;
 	} else {
-		//		$view = new LoginView ();
-		//		$view->display ();
 		return false;
 	}
 }
@@ -117,11 +115,15 @@ function request_post() {
 	$post ['post_title'] = addslashes ( htmlspecialchars ( $_REQUEST ['title'] ) );
 	$post ['post_content'] = addslashes ( htmlspecialchars ( $_REQUEST ['content'] ) );
 	$post ['publish_date'] = date ( 'Y-m-d-G-i-s' );
-	$post ['coming_date'] = addslashes ( $_REQUEST ['time'] );
+	$post ['coming_date'] = addslashes ( $_REQUEST ['year'].'-'. $_REQUEST ['month'].'-'. $_REQUEST ['day'].'-'. $_REQUEST ['hour'].'-'. $_REQUEST ['min']);
 	$post ['type'] = 1;
 	$post ['uid'] = $_SESSION ['uid'];
 	$post ['place'] = addslashes ( $_REQUEST ['place'] );
 	$post ['speakers'] = addslashes ( $_REQUEST ['speakers'] );
-	
+	$post ['statue'] = 1;
+	$post ['keywords'] = addslashes ( $_REQUEST ['keywords'] );
+	if($post ['keywords'] == '多关键词用分号分开'){
+		$post ['keywords'] = '';
+	}
 	return $post;
 }

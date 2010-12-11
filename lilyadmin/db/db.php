@@ -1,6 +1,5 @@
-<?php
+﻿<?php
 include_once '/db_config.php';
-
 class DB {
 	var $post_cols = array ('post_title', 'post_content', 'public_date', 'coming_date', 'type', 'uid' );
 	
@@ -35,7 +34,7 @@ class DB {
 	}
 	
 	public function new_post($valueArr) {
-		$sql = 'insert into posts(post_title, post_content, publish_date, coming_date, type, uid, place, speakers) values(';
+		$sql = 'insert into posts(post_title, post_content, publish_date, coming_date, type, uid, place, speakers, statue, keywords) values(';
 		$size = sizeof ( $valueArr );
 		$i = 0;
 		foreach ( $valueArr as $value ) {

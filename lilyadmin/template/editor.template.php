@@ -47,7 +47,7 @@ if($modify){
 	<div class="wrapper">
 		<div class="header">
 			<img id="logo" src="imgs/logo.png" />
-			<h1 id="site_name">慧聚南大</h1>
+			<h1 id="site_name">智汇南大</h1>
 			<a id="logout" href="index.php?action=logout">注销登录&gt;&gt;</a>
 		</div>
 		<div class="main">
@@ -64,13 +64,49 @@ if($modify){
 			<div class="editor_header">
 				<span class="item"><span class="label">活动标题:</span><input tabindex="1" class="validate[required] text-input" type="text" id="post_title" name="title" value="<?php if($modify){echo stripcslashes($post['post_title']);}?>"  /></span>
 				<div class="clear"></div>
-				<span id="time_wrapper" class="item"><span class="label">讲座时间:</span><input tabindex="3" class="validate[required,custom[date],length[0,100]] text-input" type="text" id="datepicker" name="time" value="<?php if($modify){echo stripcslashes($post['coming_date']);}?>" /> </span>
+				<span id="time_wrapper" class="item">
+					<span class="label">讲座时间:</span>
+					<span id="time_picker">
+						<select name="year">
+						<?php for($i = date('Y'); $i < date('Y') + 3; $i++){?>
+							<option><?php echo $i?></option>
+						<?php }?>
+						</select>
+						年
+						<select name="month">
+						<?php for($i = 1; $i < 13; $i++){?>
+							<option><?php echo $i;?></option>
+						<?php }?>
+						</select>
+						月
+						<select name="day">
+						<?php for($i = 1; $i < 32; $i++){?>
+							<option><?php echo $i;?></option>
+						<?php }?>
+						</select>
+						日
+						<select name="hour">
+						<?php for($i = 0; $i < 24; $i++){?>
+							<option><?php echo $i;?></option>
+						<?php }?>
+						</select>
+						时
+						<select  name="min">
+						<?php for($i = 0; $i < 60; $i++){?>
+							<option><?php echo $i;?></option>
+						<?php }?>
+						</select>分
+					</span>
+				</span>
+				<div class="clear"></div>
 				<span id="place_wrapper" class="item"><span class="label">讲座地点:</span><input tabindex="2" class="validate[required] text-input"  type="text" id="place" name="place" value="<?php if($modify){echo stripcslashes($post['place']);}?>" /> </span>
 				<div class="clear"></div>
-				<span class="item"><span class="label">主讲人:</span><input tabindex="4" class="validate[required] text-input"  type="text" id="speakers" class='error' name="speakers" value="<?php if($modify){echo stripcslashes($post['speakers']);}?>"  /> </span>
+				<span class="item"><span class="label">主讲人:</span><input tabindex="4" class="validate[required] text-input"  type="text" id="speakers" name="speakers" value="<?php if($modify){echo stripcslashes($post['speakers']);}?>"  /> </span>
+				<div class="clear"></div>
+				<span class="item"><span class="label">关键词:</span><input tabindex="5" class="text-input"  type="text" id="keywords" name="keywords" value="<?php if($modify){if($post['keywords']){echo $post['keywords'];}else{echo '多关键词用分号分开';};}else{ echo '多关键词用分号分开';}?>" onClick="javascript:this.value=''" onBlur="javascript:if(this.value === ''){this.value='多关键词用分号分开'}" /> </span>
 				<div class="clear"></div>
 				<span class="item" id='optrations'><span class="label">讲座简介：</span><span  id="operation">
-				<input tabindex="7" type="button" onclick="javascript:self.location='index.php'" value="新文章" name="publish" id="publish"  />
+				<input tabindex="7" type="button" onClick="javascript:self.location='index.php'" value="新文章" name="publish" id="publish"  />
 				<input tabindex="6" type="submit" value="<?php if($modify){echo '更新';}else{echo '发表';};?>" name="publish" id="publish"  /></span></span>
 			</div>
 			<div class="clear"></div>
@@ -142,7 +178,7 @@ if($modify){
 								<a class="modify" href="<?php echo ADMIN_BASE_URL;?>/index.php?action=edit&pid=<?php echo $recent_post['pid']?>">修改</a>
 							</td>
 							<td>
-								<a class="delete" onclick="javascript:if(confirm('确信要删除这篇文章吗？')){ return true;}else{return false;}" href='<?php echo ADMIN_BASE_URL;?>/index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
+								<a class="delete" onClick="javascript:if(confirm('确信要删除这篇文章吗？')){ return true;}else{return false;}" href='<?php echo ADMIN_BASE_URL;?>/index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
 							</td>
 						</tr>
 					<?php }?>
