@@ -55,7 +55,7 @@ if($modify){
 			<div id="messages" >
 			<ul>
 			<?php foreach ($this->messages as $value) { ?>
-				<li><?php echo $value;?></li>
+				<li><?php echo '&nbsp;&nbsp;'.$value;?></li>
 			<?php }?>
 			</ul>
 			</div>
@@ -67,33 +67,38 @@ if($modify){
 				<span id="time_wrapper" class="item">
 					<span class="label">讲座时间:</span>
 					<span id="time_picker">
+                    <?php 
+					if($modify){
+						$time = list($y, $m, $d, $h, $min, $home, $shell) = explode("-", $post['coming_date']);
+					}
+					?>
 						<select name="year">
 						<?php for($i = date('Y'); $i < date('Y') + 3; $i++){?>
-							<option><?php echo $i?></option>
+							<option <?php if($modify){if($y == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
 						<?php }?>
 						</select>
 						年
 						<select name="month">
 						<?php for($i = 1; $i < 13; $i++){?>
-							<option><?php echo $i;?></option>
+							<option <?php if($modify){if($m == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
 						<?php }?>
 						</select>
 						月
 						<select name="day">
 						<?php for($i = 1; $i < 32; $i++){?>
-							<option><?php echo $i;?></option>
+							<option <?php if($modify){if($d == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
 						<?php }?>
 						</select>
 						日
 						<select name="hour">
 						<?php for($i = 0; $i < 24; $i++){?>
-							<option><?php echo $i;?></option>
+							<option <?php if($modify){if($h == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
 						<?php }?>
 						</select>
 						时
 						<select  name="min">
 						<?php for($i = 0; $i < 60; $i++){?>
-							<option><?php echo $i;?></option>
+							<option <?php if($modify){if($min == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
 						<?php }?>
 						</select>分
 					</span>
@@ -103,9 +108,19 @@ if($modify){
 				<div class="clear"></div>
 				<span class="item"><span class="label">主讲人:</span><input tabindex="4" class="validate[required] text-input"  type="text" id="speakers" name="speakers" value="<?php if($modify){echo stripcslashes($post['speakers']);}?>"  /> </span>
 				<div class="clear"></div>
-				<span class="item"><span class="label">关键词:</span><input tabindex="5" class="text-input"  type="text" id="keywords" name="keywords" value="<?php if($modify){if($post['keywords']){echo $post['keywords'];}else{echo '多关键词用分号分开';};}else{ echo '多关键词用分号分开';}?>" onClick="javascript:this.value=''" onBlur="javascript:if(this.value === ''){this.value='多关键词用分号分开'}" /> </span>
+				<span class="item"><span class="label">关键词:</span><input tabindex="5" class="text-input"  type="text" id="keywords" name="keywords" value="<?php if($modify){if($post['keywords']){echo $post['keywords'];}else{echo '多关键词用分号分开';};}else{ echo '多关键词用分号分开';}?>" onClick="javascript:if(this.value==='多关键词用分号分开'){this.value='';}" onBlur="javascript:if(this.value === ''){this.value='多关键词用分号分开'}" /> </span>
+                <div class="clear"></div>
+                <span class="item"><span class="label">文章类型:</span>
+               
+                <select name="type" id="type_picker">
+                <?php global $types; foreach($types as $index=>$value){  ?>
+                    <option value="<?php echo $index;?>" <?php if($modify){ if($index == $post['type']){echo 'selected="selected"';}}  ?>><?php  echo $value; ?></option>
+                <?php }?>
+                </select>
+           		</span>
 				<div class="clear"></div>
-				<span class="item" id='optrations'><span class="label">讲座简介：</span><span  id="operation">
+				<span class="item" id='optrations'><span class="label">讲座简介:</span>
+                <span  id="operation">
 				<input tabindex="7" type="button" onClick="javascript:self.location='index.php'" value="新文章" name="publish" id="publish"  />
 				<input tabindex="6" type="submit" value="<?php if($modify){echo '更新';}else{echo '发表';};?>" name="publish" id="publish"  /></span></span>
 			</div>
@@ -172,13 +187,13 @@ if($modify){
 						?>
 						<tr>
 							<td>
-								<a class="post_title" title="点击查看" href="<?php echo ADMIN_BASE_URL;?>/index.php?action=edit&pid=<?php echo $recent_post['pid']?>"><?php echo $recent_post['post_title']; ?></a>&nbsp;&nbsp;
+								<a class="post_title" title="点击查看" href="index.php?action=edit&pid=<?php echo $recent_post['pid']?>"><?php echo $recent_post['post_title']; ?></a>&nbsp;&nbsp;;
 							</td>
 							<td>
-								<a class="modify" href="<?php echo ADMIN_BASE_URL;?>/index.php?action=edit&pid=<?php echo $recent_post['pid']?>">修改</a>
+								<a class="modify" href="index.php?action=edit&pid=<?php echo $recent_post['pid']?>">修改</a>
 							</td>
 							<td>
-								<a class="delete" onClick="javascript:if(confirm('确信要删除这篇文章吗？')){ return true;}else{return false;}" href='<?php echo ADMIN_BASE_URL;?>/index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
+								<a class="delete" onClick="javascript:if(confirm('确信要删除这篇文章吗？')){ return true;}else{return false;}" href='index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
 							</td>
 						</tr>
 					<?php }?>

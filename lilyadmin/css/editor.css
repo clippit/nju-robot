@@ -113,6 +113,7 @@ body {
 .item .label {
 	width: 100px;
 	float: left;
+	text-align:right;
 	line-height: 30px;
 }
 
@@ -126,10 +127,11 @@ body {
 	float:left;
 }
 
-#time_picker select{
+#time_picker select, #type_picker{
 	border: solid 1px #aaa;
-	min-width:60px;
-	height:26px;
+	min-width:70px;
+	font-size:16px;
+	height:30px;
 	border: solid 1px #aaa;
 }
 #my_posts {

@@ -1,8 +1,6 @@
 ﻿<?php
-include_once '/db_config.php';
+include_once 'db_config.php';
 class DB {
-	var $post_cols = array ('post_title', 'post_content', 'public_date', 'coming_date', 'type', 'uid' );
-	
 	var $dbc;
 	var $dbh = null;
 	public function __construct() {
@@ -34,7 +32,7 @@ class DB {
 	}
 	
 	public function new_post($valueArr) {
-		$sql = 'insert into posts(post_title, post_content, publish_date, coming_date, type, uid, place, speakers, statue, keywords) values(';
+		$sql = 'insert into posts(`post_title`, `post_content`, `publish_date`, `coming_date`, `type`, `uid`, `place`, `speakers`, `statue`, `keywords`) values(';
 		$size = sizeof ( $valueArr );
 		$i = 0;
 		foreach ( $valueArr as $value ) {
@@ -66,11 +64,12 @@ class DB {
 			$key = $indexs [$i];
 			$sql .= " $key " . '=' . "'$values[$key]'" . ', ';
 		}
-		$sql .= " $indexs[$i]" . '=' . "'$values[$key]' ";
+		$last_index = $indexs[$i];
+		$sql .= " $indexs[$i]" . '=' . "'$values[$last_index]' ";
 		@session_start ();
 		
 		$sql .= ' where uid = ' . $_SESSION ['uid'] . ' and ' . ' pid = ' . $pid;
-		
+
 		$this->dbh->beginTransaction ();
 		$sth = $this->dbh->prepare ( $sql );
 		

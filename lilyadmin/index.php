@@ -1,9 +1,9 @@
 <?php
+@session_start();
 include_once 'view/LoginView.class.php';
 include_once 'view/EditorView.class.php';
 include_once 'db/db.php';
 include_once 'config.php';
-
 if (! isset ( $_REQUEST ['action'] ) || empty ( $_REQUEST ['action'] )) { //default action 
 	if (auth ()) { // if in to Editor
 		$view = new EditorView ();
@@ -17,7 +17,6 @@ if (! isset ( $_REQUEST ['action'] ) || empty ( $_REQUEST ['action'] )) { //defa
 		$db = new DB ();
 		$uid = $db->is_user_exist ( $user_name, $pwd );
 		if ($uid > 0) {
-			@session_start ();
 			$_SESSION ['uid'] = $uid;
 			$view = new EditorView ();
 		} else {
@@ -86,7 +85,6 @@ if (! isset ( $_REQUEST ['action'] ) || empty ( $_REQUEST ['action'] )) { //defa
 		$view = new LoginView ();
 	}
 } else if ($_REQUEST ['action'] == 'logout') {
-	@session_start ();
 	$view = new LoginView ();
 	if (auth ()) {
 		$_SESSION ['uid'] = '';
@@ -102,8 +100,6 @@ if ($view) {
 }
 
 function auth() {
-	//	return true;
-	@session_start ();
 	if (isset ( $_SESSION ['uid'] ) && (! empty ( $_SESSION ['uid'] ))) {
 		return true;
 	} else {
@@ -116,7 +112,7 @@ function request_post() {
 	$post ['post_content'] = addslashes ( htmlspecialchars ( $_REQUEST ['content'] ) );
 	$post ['publish_date'] = date ( 'Y-m-d-G-i-s' );
 	$post ['coming_date'] = addslashes ( $_REQUEST ['year'].'-'. $_REQUEST ['month'].'-'. $_REQUEST ['day'].'-'. $_REQUEST ['hour'].'-'. $_REQUEST ['min']);
-	$post ['type'] = 1;
+	$post ['type'] = $_REQUEST ['type'];
 	$post ['uid'] = $_SESSION ['uid'];
 	$post ['place'] = addslashes ( $_REQUEST ['place'] );
 	$post ['speakers'] = addslashes ( $_REQUEST ['speakers'] );
@@ -126,4 +122,14 @@ function request_post() {
 		$post ['keywords'] = '';
 	}
 	return $post;
+}
+
+function get_type_num($key){
+	global $type_map;
+	$map =  $type_map;
+	if(isset($map[$key])){
+		return $map[$key];
+	}else{
+		return 0;
+	}
 }
