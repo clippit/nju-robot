@@ -1,14 +1,13 @@
-ï»¿<?php
-include_once 'db_config.php';
+<?php
 class DB {
 	var $dbc;
 	var $dbh = null;
 	public function __construct() {
+		include_once 'db_config.php';
 		$this->dbh = new PDO ( 'sqlite:' . SLQITE_DB );
-	
 	}
 	private function inject_check($sql_str) {
-		return eregi ( 'select|insert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|order|by|and 1\=|union|into|load_file|outfile', $sql_str ); // è¿›è¡Œè¿‡æ»¤
+		return eregi ( 'select|insert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|order|by|and 1\=|union|into|load_file|outfile', $sql_str ); // ½øÐÐ¹ýÂË
 	}
 	public function is_user_exist($uname, $pwd) {
 		if (! $this->inject_check ( $uname ) && ! $this->inject_check ( $pwd )) {
@@ -49,7 +48,7 @@ class DB {
 		$sth = $this->dbh->prepare ( $sql );
 		if ($sth->execute ()) {
 			$this->dbh->commit ();
-			return $this->dbh->lastInsertId (); // 		è¿”å›ž      pid
+			return $this->dbh->lastInsertId (); // 		·µ»Ø      pid
 		} else {
 			return - 1;
 		}
@@ -132,4 +131,4 @@ class DB {
 			return false;
 		}
 	}
-}
+}?>

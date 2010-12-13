@@ -110,7 +110,7 @@ function request_post() {
 	$post = array ();
 	$post ['post_title'] = addslashes ( htmlspecialchars ( $_REQUEST ['title'] ) );
 	$post ['post_content'] = addslashes ( htmlspecialchars ( $_REQUEST ['content'] ) );
-	$post ['publish_date'] = date ( 'Y-m-d-G-i-s' );
+	$post ['publish_date'] = date ( 'Y-m-d-H-i-s' );
 	$post ['coming_date'] = addslashes ( $_REQUEST ['year'].'-'. $_REQUEST ['month'].'-'. $_REQUEST ['day'].'-'. $_REQUEST ['hour'].'-'. $_REQUEST ['min']);
 	$post ['type'] = $_REQUEST ['type'];
 	$post ['uid'] = $_SESSION ['uid'];

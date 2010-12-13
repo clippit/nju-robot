@@ -1,9 +1,7 @@
 <?php
-//mysql config
-define('HOST_NAME', 'localhost');
-define('DB_USER', 'root');
-define('DB_PSW', 'root');
-define('DB_NAME', 'njuintegrate');
-//sqlite config
-define('SLQITE_DB', 'db/njuintegrate.s3db');
+DEFINE('HOST_NAME', 'localhost');
+DEFINE('DB_USER', 'root');
+DEFINE('DB_PSW', 'root');
+DEFINE('DB_NAME', 'njuintegrate');
+DEFINE('SLQITE_DB', 'db/njuintegrate.s3db');
 ?>

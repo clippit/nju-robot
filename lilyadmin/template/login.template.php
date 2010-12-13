@@ -1,11 +1,11 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" >
 		<title>登陆</title>
 		<link rel="stylesheet" type="text/css" media="screen" href="css/login.css">
 	</head>
 	<body>
-	<div id="outer_wrapper">
 		<div id="wrapper">
 			<div id="login_header">
 				<img src="imgs/logo.png" />
@@ -40,7 +40,6 @@
 				<div id="copyright">Powered By <a href="http://www.lilystudio.org">LilyStudio</a></div>
 			</form>
 		</div>
-	</div>
 	</body>
 	
 </html>
