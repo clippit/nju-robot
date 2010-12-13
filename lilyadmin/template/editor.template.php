@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>慧聚南大</title>
@@ -187,13 +187,13 @@ if($modify){
 						?>
 						<tr>
 							<td>
-								<a class="post_title" title="点击查看" href="index.php?action=edit&pid=<?php echo $recent_post['pid']?>"><?php echo $recent_post['post_title']; ?></a>&nbsp;&nbsp;;
+								<a class="post_title" title="点击查看" href="index.php?action=edit&pid=<?php echo $recent_post['pid']?>"><?php echo $recent_post['post_title']; ?></a>&nbsp;&nbsp;
 							</td>
 							<td>
 								<a class="modify" href="index.php?action=edit&pid=<?php echo $recent_post['pid']?>">修改</a>
 							</td>
 							<td>
-								<a class="delete" onClick="javascript:if(confirm('确信要删除这篇文章吗？')){ return true;}else{return false;}" href='index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
+								<a class="delete" onClick="javascript:if(confirm('确定要删除这篇文章吗？')){ return true;}else{return false;}" href='index.php?action=delete&pid=<?php echo $recent_post['pid']?>'>删除</a>
 							</td>
 						</tr>
 					<?php }?>
