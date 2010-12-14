@@ -28,7 +28,7 @@ def generate_html(text):
 	text = text.replace('  ', '&nbsp;&nbsp;')
 	text = re.sub('\s+', ' ', text)              
 	# Step 4: clear ANSI color code
-	text = re.sub(r'\[[0-9;]{0,4}m', '', text)
+	text = re.sub(r'\[[0-9;]*m', '', text)
 	# Complete!
 	return text
 	
