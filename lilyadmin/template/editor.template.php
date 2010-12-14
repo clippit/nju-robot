@@ -71,7 +71,9 @@ if($modify){
 					<span id="time_picker">
                     <?php 
 					if($modify){
-						$time = list($y, $m, $d, $h, $min, $home, $shell) = explode("-", $post['coming_date']);
+						list($date, $time) = explode(" ", $post['coming_date']);
+						list($y, $m, $d) = explode("-", $date);
+						list($h, $min) = explode(":", $time);
 					}
 					?>
 						<select name="year">
