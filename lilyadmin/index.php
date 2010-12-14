@@ -118,9 +118,12 @@ function request_post() {
 	$post ['speakers'] = addslashes ( $_REQUEST ['speakers'] );
 	$post ['statue'] = 1;
 	$post ['keywords'] = addslashes ( $_REQUEST ['keywords'] );
+
 	if($post ['keywords'] == '多关键词用分号分开'){
 		$post ['keywords'] = '';
 	}
+	strtr($post ['keywords'],'；' , ',');
+
 	return $post;
 }
 

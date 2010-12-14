@@ -84,25 +84,25 @@ if($modify){
 						年
 						<select name="month">
 						<?php for($i = 1; $i < 13; $i++){?>
-							<option <?php if($modify){if($m == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
+							<option <?php if($modify){if($m == $i){echo 'selected="selected"';}}  ?>><?php echo str_pad($i, 2, "0", STR_PAD_LEFT);?></option>
 						<?php }?>
 						</select>
 						月
 						<select name="day">
 						<?php for($i = 1; $i < 32; $i++){?>
-							<option <?php if($modify){if($d == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
+							<option <?php if($modify){if($d == $i){echo 'selected="selected"';}}  ?>><?php echo str_pad($i, 2, "0", STR_PAD_LEFT);?></option>
 						<?php }?>
 						</select>
 						日
 						<select name="hour">
 						<?php for($i = 0; $i < 24; $i++){?>
-							<option <?php if($modify){if($h == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
+							<option <?php if($modify){if($h == $i){echo 'selected="selected"';}}  ?>><?php echo str_pad($i, 2, "0", STR_PAD_LEFT);?></option>
 						<?php }?>
 						</select>
 						时
 						<select  name="min">
 						<?php for($i = 0; $i < 60; $i++){?>
-							<option <?php if($modify){if($min == $i){echo 'selected="selected"';}}  ?>><?php echo $i?></option>
+							<option <?php if($modify){if($min == $i){echo 'selected="selected"';}}  ?>><?php echo str_pad($i, 2, "0", STR_PAD_LEFT);?></option>
 						<?php }?>
 						</select>分
 					</span>
