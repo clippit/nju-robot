@@ -117,11 +117,12 @@ for i in range(9, -1, -1):
 			store_data()
 			update_wordpress()
 			update_renren()
-			update_sina()
 			update_douban()
 			update_twitter()
+			update_sina()
 		except:
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'JiaoWu News',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
 		
 	f.write(news.attr.title.encode("utf-8"))
 	f.write('\n')

@@ -163,11 +163,12 @@ for i in range(0,30,3):
 			store_data()
 			update_wordpress()
 			update_renren()
-			update_sina()
 			update_douban()
 			update_twitter()
+			update_sina()
 		except:
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
 	
 
 	f.write(title.encode('UTF-8'))

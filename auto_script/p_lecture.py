@@ -102,13 +102,14 @@ cur = con.cursor()
 cur.execute("SELECT * FROM posts p join users u on p.uid = u.uid WHERE p.statue=1 AND (julianday(p.coming_date)-julianday(datetime(CURRENT_TIMESTAMP,'localtime')))<4;")
 
 for row in cur:
+	print row['post_title'].encode("utf-8")
 	log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, row['post_title'].encode("utf-8"), ) )
 	try:
 		postid = update_wordpress(row)
 		update_renren(row, postid)
 		update_douban(row, postid)
-		update_sina(row, postid)
 		update_twitter(row, postid)
+		update_sina(row, postid)
 		updatecur = con.cursor()
 		updatecur.execute("UPDATE posts SET status = 0 WHERE pid = ?", (row['pid']))
 		updatecur.commit()
@@ -116,6 +117,7 @@ for row in cur:
 	except:
 		log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 		traceback.print_exc(file=sys.stdout)
+log.close()
 cur.close()
 con.close()
 	
