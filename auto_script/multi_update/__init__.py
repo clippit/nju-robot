@@ -22,24 +22,25 @@ WORDPRESS_XMLRPC_URL = 'http://njulily.com/xmlrpc.php'
 WORDPRESS_USERNAME = 'lilybot'
 WORDPRESS_PASSWORD = 'imabot123'
 
-# TEST ACCOUNT
-#WORDPRESS_XMLRPC_URL = 'http://localhost/xueshenghui/xmlrpc.php'
-#WORDPRESS_USERNAME = 'lilystudio'
-#WORDPRESS_PASSWORD = 'lilystudio'
+#TEST ACCOUNT
+#WORDPRESS_XMLRPC_URL = 'http://localhost/wp/xmlrpc.php'
+#WORDPRESS_USERNAME = 'clippit'
+#WORDPRESS_PASSWORD = '5531854'
 
-def wordpress_new_post( title, content, categories=[], tags='', custom_fields=[] ):
+def wordpress_new_post( title, content, categories=[], tags='', custom_fields=[], allow_comment=1 ):
 	try:
 		blog = pyblog.WordPress(WORDPRESS_XMLRPC_URL, WORDPRESS_USERNAME, WORDPRESS_PASSWORD)
 		content_struct = { 'title': title,
 		                   'description': content,
 		                   'categories': categories,
 		                   'mt_keywords': tags,
-		                   'custom_fields': custom_fields}
+		                   'custom_fields': custom_fields,
+		                   'mt_allow_comments': allow_comment}
 		r = blog.new_post(content_struct)
 	except pyblog.BlogError, e:
 		log('wordpress', e.msg)
 		return False
-	return True
+	return r
 
 
 def renren_new_post(title, content):
@@ -47,43 +48,44 @@ def renren_new_post(title, content):
 	try:
 		s = renren.login()
 		r = renren.add_blog(title, content, s['session_key'])
-	except urllib2.URLError,e:
-		log('renren',e.reason)
-		return False
 	except urllib2.HTTPError,e:
 		log('renren',e.code)
+		return False
+	except urllib2.URLError,e:
+		log('renren',e.reason)
 		return False
 	return True if u'id' in r else False
 
 def sina_new_microblog(content):
 	try:
 		r = sina.update(content)
-	except urllib2.URLError,e:
-		log('sina',e.reason)
-		return False
 	except urllib2.HTTPError,e:
 		log('sina',e.code)
 		return False
+	except urllib2.URLError,e:
+		log('sina',e.reason)
+		return False
+
 	return True
 
 def douban_new_recommendation(title, excerpt, link):
 	try:
 		douban.add_recommendation(title, excerpt, link)
-	except urllib2.URLError,e:
-		log('douban',e.reason)
-		return False
 	except urllib2.HTTPError,e:
 		log('douban',e.code)
+		return False
+	except urllib2.URLError,e:
+		log('douban',e.reason)
 		return False
 	return True
 
 def twitter_new_status(content):
 	try:
 		twitter.status_update(content)
+	except urllib2.HTTPError,e:
+		log('twitter',e.code)
+		return False
 	except urllib2.URLError,e:
 		log('twitter',e.reason)
-		return False
-	except urllib2.HTTPError.e:
-		log('twitter',e.code)
 		return False
 	return True

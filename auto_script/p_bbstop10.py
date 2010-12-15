@@ -68,7 +68,7 @@ def update_wordpress():
 	categories = [u'百合十大']
 	tags = '%s, %s' %('LilyBBS', board, )
 	custom_fields = [{'key': 'source', 'value': friendly_link}, {'key': 'author', 'value': author}]
-	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields):
+	if multi_update.wordpress_new_post(title, content, categories, tags, custom_fields, 0):
 		print 'Wordpress Update Successful!'
 		log.write( '%s - LilyBBS TOP10 - a new post to wordpress\n' % (datetime.now(),) )
 	else:
