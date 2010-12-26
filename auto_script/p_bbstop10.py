@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os, sys, codecs, re, sqlite3, urllib2, urllib, base64
+import os, sys, codecs, re, sqlite3, urllib2, urllib, base64, traceback
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
@@ -161,14 +161,40 @@ for i in range(0,30,3):
 		
 		try:
 			store_data()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! STORE DATA ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		
+		try:
 			update_wordpress()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		
+		try:
 			update_renren()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! RENREN UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		
+		try:
 			update_douban()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! DOUBAN UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		
+		try:
 			update_twitter()
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! TWITTER UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		
+		try:
 			update_sina()
 		except:
-			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! SINA UPDATE ERROR !!!!!', ))
 			traceback.print_exc(file=sys.stdout)
+
 	
 
 	f.write(title.encode('UTF-8'))

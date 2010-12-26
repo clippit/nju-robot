@@ -112,12 +112,12 @@ for row in cur:
 		update_sina(row, postid)
 		updatecur = con.cursor()
 		updatecur.execute("UPDATE posts SET status = 0 WHERE pid = ?", (row['pid']))
-		updatecur.commit()
 		updatecur.close()
 	except:
 		log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))
 		traceback.print_exc(file=sys.stdout)
 log.close()
 cur.close()
+con.commit()
 con.close()
 	
