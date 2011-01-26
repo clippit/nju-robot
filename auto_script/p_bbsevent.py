@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os, sys, codecs, re, sqlite3, urllib2, json, traceback
+import os, sys, codecs, re, sqlite3, urllib2, urllib, base64, json, traceback
 from datetime import datetime
 from pyquery import PyQuery as pq
 import multi_update
 
 path = os.path.abspath(os.path.dirname(sys.argv[0]))
+GET_IMAGE = 'http://njulily.com/getimg.php?r='
 
 ################################################################################
 ###---###---### The following codes are the same with p_bbstop10 ###---###---###
@@ -147,7 +148,7 @@ for i in range(0,len(event_list)):
 		datetime_str = search_datetime.group('time').replace('  ', ' 0')
 		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
 		print ('==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time)).encode('UTF-8')
-		content = generate_html( page[len(header)+1:] )
+		content = generate_html( page[len(header):] )
 		###---###---###   The above codes are the same with p_bbstop10   ###---###---###
 		################################################################################
 		
