@@ -36,9 +36,17 @@ def generate_html(text):
 
 def read_url(url):
 	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
-	page = urllib2.urlopen(url).read().replace('\033','')
-	page = unicode(page, 'gbk', 'ignore') 
-	return page
+	retries = 6
+	while (retries>0):
+		try:
+			page = urllib2.urlopen(url, timeout=30).read().replace('\033','')
+			page = unicode(page, 'gbk', 'ignore') 
+			return page
+		except Exception , what:
+			print what
+			retries -= 1
+			print '######## Retrying.... ########'
+	raise Exception("Read URL Failed!!!")
 
 def encode_url(match):
 	url = urllib.pathname2url( base64.b64encode(match.group(1)) )
@@ -115,7 +123,13 @@ last_update = f.readlines()
 f.close()
 
 log = open(path+'/log.log', 'a')
-remote_resource = urllib2.urlopen('http://bbs.nju.edu.cn/cache/t_act.js')
+try:
+	remote_resource = urllib2.urlopen('http://bbs.nju.edu.cn/cache/t_act.js')
+except:
+	log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH TOP10 LIST FAILED!!!!!', ))
+	traceback.print_exc(file=sys.stdout)
+	print "subject get failed"
+	exit()
 event_str = unicode( remote_resource.read()[10:-25], 'gbk', 'ignore').replace("'",'"').replace('brd:','"brd":').replace('file:','"file":').replace('title:','"title":')
 event_list = json.loads( event_str )
 
@@ -138,7 +152,13 @@ for i in range(0,len(event_list)):
 		#if page[page.find(u'发信站')-1] != '\n':
 		#	page = page.replace(u'发信站:', u'\n发信站:')
 		### end
-		page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
+		try:
+			page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
+		except:
+			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH BBS POST FAILED!!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+			continue
+
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
 		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines

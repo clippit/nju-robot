@@ -34,9 +34,17 @@ def generate_html(text):
 	
 def read_url(url):
 	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
-	page = urllib2.urlopen(url).read().replace('\033','')
-	page = unicode(page, 'gbk', 'ignore') 
-	return page
+	retries = 6
+	while (retries>0):
+		try:
+			page = urllib2.urlopen(url, timeout=30).read().replace('\033','')
+			page = unicode(page, 'gbk', 'ignore') 
+			return page
+		except Exception , what:
+			print what
+			retries -= 1
+			print '######## Retrying.... ########'
+	raise Exception("Read URL Failed!!!")
 
 def store_data():
 	"save backup to database"
@@ -47,7 +55,7 @@ def store_data():
 	con.commit()
 	con.close()
 
-def db_fetch(count=5):
+def db_fetch(count=10):
 	"get the latest several titles in database"
 	con = sqlite3.connect(path+'/db.sqlite')
 	cur = con.cursor()
@@ -120,7 +128,13 @@ last_update = [last_update[i][:-1] for i in range( len(last_update) )]
 f.close()
 
 log = open(path+'/log.log', 'a')
-top10_list = pq(url = 'http://bbs.nju.edu.cn/bbstop10', opener=read_url) ('table a')
+try:
+	top10_list = pq(url = 'http://bbs.nju.edu.cn/bbstop10', opener=read_url) ('table a')
+except:
+	log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH TOP10 LIST FAILED!!!!!', ))
+	traceback.print_exc(file=sys.stdout)
+	print "subject get failed"
+	exit()
 
 if len(top10_list) != 30:
 	log.write( "%s - LilyBBS TOP10 fetch error!\n" % (datetime.now(),) )
@@ -145,7 +159,13 @@ for i in range(0,30,3):
 		#if page[page.find(u'发信站')-1] != '\n':
 		#	page = page.replace(u'发信站:', u'\n发信站:')
 		### end
-		page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
+		try:
+			page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
+		except:
+			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH BBS POST FAILED!!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+			continue
+		
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
 		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
