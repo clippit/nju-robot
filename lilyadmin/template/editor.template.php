@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>慧聚南大</title>
+	<title>智汇南大</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="js/datePicker.css" />
 	<script type="text/javascript" src='ckeditor/ckeditor.js'></script>
 	<script type="text/javascript" src='ckfinder/ckfinder.js'></script>
@@ -210,7 +210,7 @@ if($modify){
 		</div>
 		<div class="clear"></div>
 		<div id="footer">
-			<div id="copyright">Copyright@2010 powered by <a href="http://www.lilystudio.org">LilyStudio</a></div>
+			<div id="copyright">Copyright@2011 Powered By <a href="http://www.lilystudio.org">LilyStudio</a></div>
 		</div>
 	</div> 
 </div>

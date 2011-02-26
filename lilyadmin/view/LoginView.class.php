@@ -1,5 +1,6 @@
 <?php
-include_once 'View.class.php';
+$path=dirname(__FILE__);
+include_once $path.'/View.class.php';
 class LoginView extends View{
 	var $values = array();
 	/* (non-PHPdoc)
@@ -14,7 +15,7 @@ class LoginView extends View{
 	 * @see View::display()
 	 */
 	public function display() {
-		include_once '/../template/login.template.php';
+		include_once dirname(__FILE__).'/../template/login.template.php';
 	}
 /* (non-PHPdoc)
 	 * @see View::auth()

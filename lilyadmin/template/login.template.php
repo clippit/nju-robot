@@ -9,7 +9,7 @@
 		<div id="wrapper">
 			<div id="login_header">
 				<img src="imgs/logo.png" />
-				<h1>慧聚南大</h1>
+				<h1>智汇南大</h1>
 			</div>
 			<?php if(isset($this->messages)){?>
 			<div id="error_msg">

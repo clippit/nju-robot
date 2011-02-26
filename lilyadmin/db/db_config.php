@@ -1,7 +1,7 @@
 <?php
 DEFINE('HOST_NAME', 'localhost');
-DEFINE('DB_USER', 'root');
-DEFINE('DB_PSW', 'root');
-DEFINE('DB_NAME', 'njuintegrate');
-DEFINE('SLQITE_DB', 'db/njuintegrate.s3db');
+DEFINE('DB_USER', 'njulily');
+DEFINE('DB_PSW', 'NJUl1ly');
+DEFINE('DB_NAME', 'db');
+DEFINE('SLQITE_DB', '../../nju-intergrate/db.sqlite');
 ?>

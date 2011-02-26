@@ -1,6 +1,7 @@
 <?php
-include_once 'View.class.php';
-include_once '/../db/db.php';
+$path=dirname(__FILE__);
+include_once $path.'/View.class.php';
+include_once $path.'/../db/db.php';
 class EditorView extends View {
 	var $values = array ();
 	/* (non-PHPdoc)
@@ -8,7 +9,7 @@ class EditorView extends View {
 	 */
 	public function display() {
 		if ($this->auth ()) {
-			include_once '/../template/editor.template.php';
+			include_once dirname(__FILE__).'/../template/editor.template.php';
 		} else {
 			$login_view = new LoginView ();
 			$login_view->display ();

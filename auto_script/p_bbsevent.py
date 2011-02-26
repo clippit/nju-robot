@@ -36,10 +36,10 @@ def generate_html(text):
 
 def read_url(url):
 	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
-	retries = 6
+	retries = 4
 	while (retries>0):
 		try:
-			page = urllib2.urlopen(url, timeout=30).read().replace('\033','')
+			page = urllib2.urlopen(url, timeout=20).read().replace('\033','')
 			page = unicode(page, 'gbk', 'ignore') 
 			return page
 		except Exception , what:
@@ -124,13 +124,13 @@ f.close()
 
 log = open(path+'/log.log', 'a')
 try:
-	remote_resource = urllib2.urlopen('http://bbs.nju.edu.cn/cache/t_act.js')
+	remote_resource = read_url('http://bbs.nju.edu.cn/cache/t_act.js')
 except:
 	log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH TOP10 LIST FAILED!!!!!', ))
 	traceback.print_exc(file=sys.stdout)
 	print "subject get failed"
 	exit()
-event_str = unicode( remote_resource.read()[10:-25], 'gbk', 'ignore').replace("'",'"').replace('brd:','"brd":').replace('file:','"file":').replace('title:','"title":')
+event_str = remote_resource[10:-25].replace("'",'"').replace('brd:','"brd":').replace('file:','"file":').replace('title:','"title":')
 event_list = json.loads( event_str )
 
 log.write( "%s - LilyBBS Events fetch successful!\n" % (datetime.now(),) )
@@ -161,7 +161,15 @@ for i in range(0,len(event_list)):
 
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
-		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
+		
+		try:
+			header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
+		except:
+			print 'Post Parsing Error!'
+			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'POST PASRSING ERROR!!!', ))
+			traceback.print_exc(file=sys.stdout)
+			continue
+		
 		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
 		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
 		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)

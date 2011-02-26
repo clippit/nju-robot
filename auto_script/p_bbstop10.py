@@ -34,10 +34,10 @@ def generate_html(text):
 	
 def read_url(url):
 	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
-	retries = 6
+	retries = 4
 	while (retries>0):
 		try:
-			page = urllib2.urlopen(url, timeout=30).read().replace('\033','')
+			page = urllib2.urlopen(url, timeout=20).read().replace('\033','')
 			page = unicode(page, 'gbk', 'ignore') 
 			return page
 		except Exception , what:
@@ -149,7 +149,7 @@ for i in range(0,30,3):
 	board = pq(top10_list[i]).text()
 	title = "[%s]%s" % ( board, pq(top10_list[i+1]).text(), )
 	if title not in last_update+db_fetch():
-		#print title
+		print title.encode('UTF-8')
 		link = pq(top10_list[i+1]).attr.href
 		friendly_link = multi_update.short_url( ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) ) )# generate the thread link
 		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
@@ -168,7 +168,15 @@ for i in range(0,30,3):
 		
 		if page[page.find(u'发信站')-1] != '\n':
 			page = page.replace(u'发信站:', u'\n发信站:')
-		header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
+		
+		try:
+			header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
+		except:
+			print 'Post Parsing Error!'
+			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'POST PASRSING ERROR!!!', ))
+			traceback.print_exc(file=sys.stdout)
+			continue
+		
 		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
 		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
 		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)

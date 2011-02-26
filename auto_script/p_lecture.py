@@ -12,14 +12,14 @@ def postid2url(postid):
 
 def update_wordpress(row):
 	if row['type']==0:
-		categories = [u'学术讲座']
+		categories = [u'学术讲座预告']
 	elif row['type']==1:
-		categories = [u'校园活动']
+		categories = [u'校园活动预告']
 	else:
 		categories = []
 	tags = '%s, %s, %s' % (row['keywords'], row['display_name'], row['speakers'],)
 	custom_fields = [{'key': 'place',   'value': row['place']},
-	                 {'key': 'time',    'value': row['coming_date'][4:16]},
+	                 {'key': 'time',    'value': row['coming_date'][5:16]},
 	                 {'key': 'speaker', 'value': row['speakers']},
 	                 {'key': 'host',    'value': row['display_name']}]
 	post_id = multi_update.wordpress_new_post(row['post_title'], row['post_content'], categories, tags, custom_fields)
@@ -53,14 +53,14 @@ def update_renren(row,postid):
 def update_douban(row,postid):
 	if row['type']==0:
 		title =u'【学术讲座预告】%s' % (row['post_title'])
-		excerpt = u'时间：%s 地点：%s 主讲人：%s  --  %s' % (row['coming_date'][4:16], row['place'], row['speakers'], row['post_content'][:50], )
+		excerpt = u'时间：%s 地点：%s 主讲人：%s  --  %s' % (row['coming_date'][5:16], row['place'], row['speakers'], row['post_content'][:50], )
 	elif row['type']==1:
 		title =u'【校园活动预告】%s' % (row['post_title'])
-		excerpt = u'时间：%s 地点：%s 主办：%s  --  %s' % (row['coming_date'][4:16], row['place'], row['display_name'], row['post_content'][:50], )
+		excerpt = u'时间：%s 地点：%s 主办：%s  --  %s' % (row['coming_date'][5:16], row['place'], row['display_name'], row['post_content'][:50], )
 	else:
 		title =u'【预告】%s' % (row['post_title'])
-		excerpt = u'时间：%s 地点：%s  --  %s' % (row['coming_date'][4:16], row['place'], row['post_content'][:50], )
-	if multi_update.douban_new_recommendation(title, excerpt, postid2url(postid)):
+		excerpt = u'时间：%s 地点：%s  --  %s' % (row['coming_date'][5:16], row['place'], row['post_content'][:50], )
+	if multi_update.douban_new_recommendation(title, excerpt[:100], postid2url(postid)):
 		print 'Douban Update Succesful!'
 		log.write( '%s - Leture | Activity - a new recommendation to douban\n' % (datetime.now(),) )
 	else:
@@ -69,11 +69,11 @@ def update_douban(row,postid):
 
 def make_status(row,postid):
 	if row['type']==0:
-		status =u'【学术讲座预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][4:16], row['place'], postid2url(postid))
+		status =u'【学术讲座预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][5:16], row['place'], postid2url(postid))
 	elif row['type']==1:
-		status =u'【校园活动预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][4:16], row['place'], postid2url(postid))
+		status =u'【校园活动预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][5:16], row['place'], postid2url(postid))
 	else:
-		status =u'【预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][4:16], row['place'], postid2url(postid))
+		status =u'【预告】%s 时间：%s 地点：%s %s' % (row['post_title'][:70], row['coming_date'][5:16], row['place'], postid2url(postid))
 	return status
 
 def update_sina(row,postid):
@@ -106,12 +106,28 @@ for row in cur:
 	log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, row['post_title'].encode("utf-8"), ) )
 	try:
 		postid = update_wordpress(row)
-		update_renren(row, postid)
-		update_douban(row, postid)
-		update_twitter(row, postid)
-		update_sina(row, postid)
+		try:
+			update_renren(row, postid)
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! RENREN UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		try:
+			update_douban(row, postid)
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! DOUBAN UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		try:
+			update_twitter(row, postid)
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! TWITTER UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
+		try:
+			update_sina(row, postid)
+		except:
+			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! SINA MICROBLOG UPDATE ERROR !!!!!', ))
+			traceback.print_exc(file=sys.stdout)
 		updatecur = con.cursor()
-		updatecur.execute("UPDATE posts SET status = 0 WHERE pid = ?", (row['pid']))
+		updatecur.execute("UPDATE posts SET statue = 0 WHERE pid = ?", (row['pid'],))
 		updatecur.close()
 	except:
 		log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Lecture | Activity',' '*29, '!!!!! UPDATE DATA ERROR !!!!!', ))

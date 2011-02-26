@@ -7,7 +7,7 @@
 if (! isset($_GET ['r'])) {
 	exit('Need a parameter!');
 }
-define(CACHE_DIR, './lily_images/');
+define('CACHE_DIR', './lily_images/');
 $url = base64_decode($_GET ['r']);
 
 switch (strtolower(substr($url, - 3))) {
