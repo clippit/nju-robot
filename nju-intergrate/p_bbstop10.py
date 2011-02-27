@@ -29,14 +29,14 @@ def generate_html(text):
 	              r'<a href="\1" target="_blank"><img alt="" src="\1" /></a>', text)
 	text = text.replace('  ', '&nbsp;&nbsp;')
 	text = re.sub('\s+', ' ', text)              
-	# Step 5: clear ANSI color code
-	text = re.sub(r'\[[0-9;]*m', '', text)
+	# Step 5 (MOVE TO read_post): clear ANSI color code
+	#text = re.sub(r'\[[0-9;]*m', '', text)
 	# Complete!
 	return text
 	
 def read_url(url):
 	'''handle Chinese cut off bug in LilyBBS system. Just fuck it!'''
-	retries = 4
+	retries = 5
 	while (retries>0):
 		try:
 			page = urllib2.urlopen(url, timeout=20).read().replace('\033','')
@@ -47,6 +47,30 @@ def read_url(url):
 			retries -= 1
 			print '######## Retrying.... ########'
 	raise Exception("Read URL Failed!!!")
+
+def read_post(page, n):
+	raw = page.eq(n).text()
+	if raw[raw.find(u'发信站')-1] != '\n':
+		raw = raw.replace(u'发信站:', u'\n发信站:') # fix character cut off bug
+	
+	try:
+		header = re.match('.+\n.+\n.+\n', raw).group() # header is the first 3 lines
+	except:
+		print 'Post Parsing Error!'
+		log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'POST PASRSING ERROR!!!', ))
+		traceback.print_exc(file=sys.stdout)
+		return
+	
+	raw = re.sub(r'\[[0-9;]*m', '', raw) # clear ANSI color code
+	
+	search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
+	author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
+	search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
+	datetime_str = search_datetime.group('time').replace('  ', ' 0')
+	time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
+	tail_pos = raw.find(u'--\n\u203b \u6765\u6e90')
+	content = generate_html( raw[len(header):tail_pos] )
+	return (author, time, content,)
 
 def store_data():
 	"save backup to database"
@@ -156,31 +180,24 @@ for i in range(0,30,3):
 		friendly_link = multi_update.short_url( ''.join( ('http://bbs.nju.edu.cn/main.html?', urllib.pathname2url(link[22:]), ) ) )# generate the thread link
 
 		try:
-			page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
+			page = pq(url=link, opener=read_url) ('textarea')
 		except:
 			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'FETCH BBS POST FAILED!!!!!', ))
 			traceback.print_exc(file=sys.stdout)
 			continue
 		
-		if page[page.find(u'发信站')-1] != '\n':
-			page = page.replace(u'发信站:', u'\n发信站:')
+		original_post = read_post(page,0)
+		author = original_post[0]
+		time = original_post[1]
+		sofa_post = read_post(page, 1)
+		bench_post = read_post(page, 2)
+		floor_post = read_post(page, 3)
+		sofa = ''.join( (u'<li>沙发 ', sofa_post[0], u' 说：', sofa_post[2], '</li>', ) )
+		bench = ''.join( (u'<li>板凳 ', bench_post[0], u' 说：', bench_post[2], '</li>', ) )
+		floor = ''.join( (u'<li>地板 ', floor_post[0], u' 说：', floor_post[2], '</li>', ) )
+		content = ''.join( (original_post[2], u'<h3>七嘴八舌</h3><ul class="responses">', sofa, bench, floor, '</ul>') )
 		
-		try:
-			header = re.match('.+\n.+\n.+\n', page).group() # header is the first 3 lines
-		except:
-			print 'Post Parsing Error!'
-			log.write("%s - source: %s\n%s%s\n" % (datetime.now(), 'LilyBBS TOP10', ' '*29, 'POST PASRSING ERROR!!!', ))
-			traceback.print_exc(file=sys.stdout)
-			continue
-		
-		search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
-		author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
-		search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
-		datetime_str = search_datetime.group('time').replace('  ', ' 0')
-		time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
 		print ('==========================\ntitle: %s\nauthor: %s\ntime: %s\n' % (title, author, time) ).encode('UTF-8')
-		content = generate_html( page[len(header):] )
-
 		log.write( "%s - source: %s\n%stitle:  %s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, title.encode("utf-8"), ))
 		
 		try:
