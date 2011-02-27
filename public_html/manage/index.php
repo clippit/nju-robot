@@ -122,6 +122,7 @@ function request_post() {
 	if($post ['keywords'] == '多关键词用分号分开'){
 		$post ['keywords'] = '';
 	}
+	strtr($post ['keywords'],';' , ',');
 	strtr($post ['keywords'],'；' , ',');
 
 	return $post;
