@@ -19,9 +19,7 @@ def generate_html(text):
 	text = text.replace('[-LB-][-LB-]', '</p><p>').replace('[-LB-]', '<br />\n')
 	text = ''.join( ('<p>', text, '</p>',) )
 	text = text.replace('<p></p>','').replace('\r\n\r\n','').replace('</p><p>','</p>\n\n<p>')
-	# Step 3: make font style
-	text = re.sub(r'\[b\](.+?)\[\/b\]', r'<strong>\1</strong>', text)
-	# Step 4: make <img> and <a>
+	# Step 3: make <img> and <a>
 	text = re.sub(r'(^|[^\"\'\]])(?i)(http|ftp|mms|rstp|news|https)\:\/\/([^\s\033\[\]\"\'\(\)<（）。，]+)',
 	              r'\1[url]\2://\3[/url]', text)
 	text = re.sub(r'\[url\]http\:\/\/(\S+\.)(?i)(gif|jpg|png|jpeg|jp)\[\/url\]',
@@ -31,7 +29,7 @@ def generate_html(text):
 	              r'<a href="\1" target="_blank"><img alt="" src="\1" /></a>', text)
 	text = text.replace('  ', '&nbsp;&nbsp;')
 	text = re.sub('\s+', ' ', text)              
-	# Step 5: clear ANSI color code
+	# Step 4: clear ANSI color code
 	text = re.sub(r'\[[0-9;]*m', '', text)
 	# Complete!
 	return text
@@ -147,7 +145,13 @@ for i in range(0,len(event_list)):
 		friendly_link = multi_update.short_url( ''.join( ('http://bbs.nju.edu.cn/main.html?bbstcon%3Fboard%3D', event_list[i]['brd'], '%26file%3D', event_list[i]['file'], ) ) ) # generate the thread link
 		################################################################################
 		###---###---### The following codes are the same with p_bbstop10 ###---###---###
-
+		### handle Chinese cut off bug in LilyBBS system. Just fuck it!
+		#------UPDATE: move to read_url function------
+		#page = urllib2.urlopen(link).read()
+		#page = unicode(page, 'gbk', 'ignore') 
+		#if page[page.find(u'发信站')-1] != '\n':
+		#	page = page.replace(u'发信站:', u'\n发信站:')
+		### end
 		try:
 			page = pq(url=link, opener=read_url) ('textarea').eq(0).text()
 		except:

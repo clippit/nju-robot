@@ -44,7 +44,7 @@ def wordpress_new_post( title, content, categories=[], tags='', custom_fields=[]
 
 
 def renren_new_post(title, content):
-	content = ''.join( (content, u'<p style="color:#800517;font-weight:bold;font-size:larger;">★★★更多精彩，敬请关注南京大学小百合工作室近期动态！</p>',) )
+	content = ''.join( (content, u'<p style="color:#800517;font-weight:bold;font-size:larger;">★★★百合有聊 <a href="http://blog.njulily.com">http://blog.njulily.com</a>，更多新鲜，更多色彩！</p>',) )
 	try:
 		s = renren.login()
 		r = renren.add_blog(title, content, s['session_key'])
