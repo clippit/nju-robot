@@ -65,7 +65,7 @@ def read_post(page, n):
 	
 	search_author = re.search(u'信人: (?P<id>[0-9A-Za-z]{2,12}) \(', header)
 	author = ''.join( ('<a href="http://bbs.nju.edu.cn/bbsqry?userid=', search_author.group('id'), '" target="_blank">', search_author.group('id'), '</a>') ); #generate the author's id
-	search_datetime = re.search(u'南京大学小百合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
+	search_datetime = re.search(u'合站 \((?P<time>[A-Za-z0-9: ]{24})', header)
 	datetime_str = search_datetime.group('time').replace('  ', ' 0')
 	time = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') # generate the post time
 	tail_pos = raw.find(u'--\n\u203b \u6765\u6e90')

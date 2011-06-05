@@ -12,6 +12,10 @@ SECRET_KEY = 'a13bb175bc1940f6b78807e58329264f'
 RENREN_USERNAME = 'njulilystudio@126.com'
 RENREN_PASSWORD = '2d41d2433df7f8090af29a76c1d4822c'
 
+RENREN_USERNAME_2 = 'lily.studio.nju@gmail.com'
+RENREN_PASSWORD_2 = 'dfa296feb1d3634a940296d6ab6bcf12'
+
+
 # TEST ACCOUNT
 #RENREN_USERNAME = 'wxing123'
 #RENREN_PASSWORD = '71c1ebc28e10a4acea02f8ffb28ee54f'
@@ -55,6 +59,21 @@ def login():
 	                 'api_key' : API_KEY, 
 	                 'session_key' : '' }
 	return send_request(LOGIN_URL, login_request)
+
+def login_another():
+	login_request = {'check' : '0', 
+	                 'user' : RENREN_USERNAME_2, 
+	                 'clientName' : 'renren', 
+	                 'model' : 'gen', 
+	                 'version' : '20100317', 
+	                 'login_info' : '{"ver":"2.2.0.20100317","cellid":"0","from":9100201}', 
+	                 'format' : 'json', 
+	                 'password' : RENREN_PASSWORD_2, 
+	                 'v' : '1.0', 
+	                 'api_key' : API_KEY, 
+	                 'session_key' : '' }
+	return send_request(LOGIN_URL, login_request)
+
 
 def add_blog(title, content, session_key):
 	add_blog_request = {'v' : '1.1', 

@@ -23,7 +23,7 @@ import urllib2, urllib, base64
 
 def status_update(content):
 	''' Use dayanjia.com for a proxy'''
-	postdata = {'status': base64.b64encode(content)}
+	postdata = {'status': base64.b64encode(content.encode('UTF-8'))}
 	proxy_url = "http://dayanjia.com/lily2t/"
 	req = urllib2.Request(proxy_url, urllib.urlencode(postdata))
 	response = urllib2.urlopen(req, timeout=20)

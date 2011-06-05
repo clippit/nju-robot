@@ -48,6 +48,8 @@ def renren_new_post(title, content):
 	try:
 		s = renren.login()
 		r = renren.add_blog(title, content, s['session_key'])
+	#	s2 = renren.login_another()
+	#	r2 = renren.add_blog(title, content, s2['session_key'])
 	except urllib2.HTTPError,e:
 		log('renren',e.code)
 		return False

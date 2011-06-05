@@ -30,7 +30,7 @@ header("Content-Type: $type");
 if (preg_match('/^http:\/\/bbs\.nju\.edu\.cn/', $url)) {
 	if (file_exists(get_filename($url))) { // cache hit!
 		echo file_get_contents(get_filename($url));
-		exit();
+		exit(0);
 	} else { // resize it and save cache
 		$filename = get_filename($url);
 		$img_content = fetch_bbs_image($url);
@@ -39,12 +39,12 @@ if (preg_match('/^http:\/\/bbs\.nju\.edu\.cn/', $url)) {
 			smart_resize_image($filename, 550, 550, true);
 		}	
 		echo file_get_contents($filename);
-		exit();
+		exit(0);
 	}
 
 } else { // images out of the BBS
 	header("Location: $url");
-	exit();
+	exit('images out of the BBS');
 }
 
 function get_filename($url) {
