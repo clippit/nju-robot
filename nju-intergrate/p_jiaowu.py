@@ -95,7 +95,10 @@ for i in range(9, -1, -1):
 		print title.encode('UTF-8')
 		print '============================='
 		link = news.attr.href
-		d = pq(url = link)
+		try:
+			d = pq(url = link)
+		except:
+			continue
 		print 'debug----link: %s' % (link)
 		d.make_links_absolute()
 		date_str = d('div#d table tr').eq(1).find('table td').eq(1).text()[1:-1]
