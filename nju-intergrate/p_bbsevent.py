@@ -90,7 +90,7 @@ def update_renren():
 		log.write( '%s - LilyBBS Events - update renren failed!!!!!\n' % (datetime.now(),) )
 
 def update_sina():
-	content = ''.join( (u'【小百合BBS活动预告】', title, ' ', friendly_link, ) )
+	content = ''.join( (u'【#小百合BBS活动预告】', title, ' ', friendly_link, ) )
 	if multi_update.sina_new_microblog(content):
 		print 'Sina Microblog Update Succesful!'
 		log.write( '%s - LilyBBS Events - a new microblog to sina\n' % (datetime.now(),) )

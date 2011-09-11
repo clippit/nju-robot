@@ -121,7 +121,7 @@ def update_renren():
 		log.write( '%s - LilyBBS TOP10 - update renren failed!!!!!\n' % (datetime.now(),) )
 
 def update_sina():
-	tweet = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
+	tweet = ''.join( (u'【#百合十大#】', title, ' ', friendly_link, ) )
 	if multi_update.sina_new_microblog(tweet):
 		print 'Sina Microblog Update Succesful!'
 		log.write( '%s - LilyBBS TOP10 - a new microblog to sina\n' % (datetime.now(),) )
@@ -140,7 +140,7 @@ def update_douban():
 		log.write( '%s - LilyBBS TOP10 - update douban recommendation failed!!!!!\n' % (datetime.now(),) )
 
 def update_twitter():
-	status = ''.join( (u'【百合十大】', title, ' ', friendly_link, ) )
+	status = ''.join( (u'#百合十大 ', title, ' ', friendly_link, ) )
 	if multi_update.twitter_new_status(status):
 		print 'Twitter Update Succesful!'
 		log.write( '%s - LilyBBS TOP10 - a new tweet to twitter\n' % (datetime.now(),) )
