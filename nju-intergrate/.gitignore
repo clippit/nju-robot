@@ -1,2 +1,4 @@
 db.sqlite
 *.log
+multi_update/config.py
+*.pyc

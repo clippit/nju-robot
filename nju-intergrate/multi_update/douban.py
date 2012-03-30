@@ -3,10 +3,11 @@
 
 import urllib2, urllib, datetime
 import oauth
+import config
 
 # User ID: 47795365
-CONSUMER_KEY = oauth.OAuthConsumer('0eea6ff9bd3123bf2cbf4fed37936b3d', '3029eaa0862b9597')
-TOKEN = oauth.OAuthToken('374f0cd8e44f734ca5ed268aacee59e4', '1abca0f7e2d8157e')
+CONSUMER_KEY = oauth.OAuthConsumer(config.DOUBAN_OAUTH_CONSUMER_KEY, config.DOUBAN_OAUTH_CONSUMER_TOKEN)
+TOKEN = oauth.OAuthToken(config.DOUBAN_OAUTH_TOKEN_KEY, config.DOUBAN_OAUTH_TOKEN_TOKEN)
 URL_RECOMMENDATIONS = 'http://api.douban.com/recommendations'
 URL_EVENTS = 'http://api.douban.com/events'
 

@@ -2,14 +2,13 @@
 # -*- coding:utf-8 -*-
 
 import urllib2, oauth, urllib
+import config
 
-#USERNAME = 'lily.studio.nju@gmail.com'
-#PASSWORD = 'NJUl1ly'
-APP_KEY = '1999053973'
-APP_SECRET = 'd3de89c569f7cb593788e81606b6680d'
-OAUTH_TOKEN = '1c61975dfe0e349ccf52cdfa8a6dbc07'
-OAUTH_TOKEN_SECRET = 'af0940984164cfd97cf45b9729e7f0ba'
-VERIFIER = '243585'
+APP_KEY = config.SINA_APP_KEY
+APP_SECRET = config.SINA_APP_SECRET
+OAUTH_TOKEN = config.SINA_OAUTH_TOKEN
+OAUTH_TOKEN_SECRET = config.SINA_OAUTH_TOKEN_SECRET
+VERIFIER = config.SINA_VERIFIER
 UPDATE_STATUS_URL = 'http://api.t.sina.com.cn/statuses/update.json'
 CONSUMER_KEY = oauth.OAuthConsumer(APP_KEY, APP_SECRET)
 TOKEN = oauth.OAuthToken(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)

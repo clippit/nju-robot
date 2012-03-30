@@ -3,17 +3,18 @@
 
 import urllib2, urllib, hashlib, json
 from datetime import datetime
+import config
 
 LOGIN_URL = 'http://login.api.renren.com/CL.do'
 API_URL = 'http://m1.api.renren.com/restserver.do'
-API_KEY = 'db1ffe772f504e9790907be9c9a651c7'
-SECRET_KEY = 'a13bb175bc1940f6b78807e58329264f'
+API_KEY = config.RENREN_API_KEY
+SECRET_KEY = config.RENREN_SECRET_KEY
 
-RENREN_USERNAME = 'njulilystudio@126.com'
-RENREN_PASSWORD = '2d41d2433df7f8090af29a76c1d4822c'
+RENREN_USERNAME = config.RENREN_USERNAME
+RENREN_PASSWORD = config.RENREN_PASSWORD
 
-RENREN_USERNAME_2 = 'lily.studio.nju@gmail.com'
-RENREN_PASSWORD_2 = 'dfa296feb1d3634a940296d6ab6bcf12'
+# RENREN_USERNAME_2 = 'lily.studio.nju@gmail.com'
+# RENREN_PASSWORD_2 = 'dfa296feb1d3634a940296d6ab6bcf12'
 
 
 # TEST ACCOUNT

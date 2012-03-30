@@ -7,7 +7,7 @@ from pyquery import PyQuery as pq
 import multi_update
 
 path = os.path.abspath(os.path.dirname(sys.argv[0]))
-GET_IMAGE = 'http://njulily.com/getimg.php?r='
+GET_IMAGE = 'http://njuer.us/getimg.php?r='
 
 def generate_html(text):
 	# Step 1: convert & < > to &amp; &lt; &gt;
@@ -206,11 +206,11 @@ for i in range(0,30,3):
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! STORE DATA ERROR !!!!!', ))
 			traceback.print_exc(file=sys.stdout)
 		
-		try:
-			update_wordpress()
-		except:
-			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
-			traceback.print_exc(file=sys.stdout)
+		# try:
+		# 	update_wordpress()
+		# except:
+		# 	log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS TOP10',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
+		# 	traceback.print_exc(file=sys.stdout)
 		
 		try:
 			update_renren()

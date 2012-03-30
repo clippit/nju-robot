@@ -7,7 +7,7 @@ from pyquery import PyQuery as pq
 import multi_update
 
 path = os.path.abspath(os.path.dirname(sys.argv[0]))
-GET_IMAGE = 'http://njulily.com/getimg.php?r='
+GET_IMAGE = 'http://njuer.us/getimg.php?r='
 
 ################################################################################
 ###---###---### The following codes are the same with p_bbstop10 ###---###---###
@@ -188,11 +188,11 @@ for i in range(0,len(event_list)):
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS Events',' '*29, '!!!!! STORE DATA ERROR !!!!!', ))
 			traceback.print_exc(file=sys.stdout)
 		
-		try:
-			update_wordpress()
-		except:
-			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS Events',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
-			traceback.print_exc(file=sys.stdout)
+		# try:
+		# 	update_wordpress()
+		# except:
+		# 	log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'LilyBBS Events',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
+		# 	traceback.print_exc(file=sys.stdout)
 		
 		try:
 			update_renren()

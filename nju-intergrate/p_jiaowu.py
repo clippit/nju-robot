@@ -122,11 +122,11 @@ for i in range(9, -1, -1):
 			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Jiaowu News',' '*29, '!!!!! STORE DATA ERROR !!!!!', ))
 			traceback.print_exc(file=sys.stdout)
 		
-		try:
-			update_wordpress()
-		except:
-			log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Jiaowu News',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
-			traceback.print_exc(file=sys.stdout)
+		# try:
+		# 	update_wordpress()
+		# except:
+		# 	log.write( "%s - source: %s\n%s%s\n" % ( datetime.now(), 'Jiaowu News',' '*29, '!!!!! WORDPRESS UPDATE ERROR !!!!!', ))
+		# 	traceback.print_exc(file=sys.stdout)
 		
 		try:
 			update_renren()
