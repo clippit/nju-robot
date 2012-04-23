@@ -28,18 +28,16 @@ switch (strtolower(substr($url, - 3))) {
 header("Content-Type: $type");
 
 if (preg_match('/^http:\/\/bbs\.nju\.edu\.cn/', $url)) {
-	if (file_exists(get_filename($url))) { // cache hit!
-		echo file_get_contents(get_filename($url));
-		exit(0);
+	$filename = get_filename($url);
+	if (file_exists($filename)) { // cache hit!
+		show_image($filename);
 	} else { // resize it and save cache
-		$filename = get_filename($url);
 		$img_content = fetch_bbs_image($url);
 		file_put_contents($filename, $img_content);
 		if ($type == 'image/png' || $type == 'image/jpeg') {
 			smart_resize_image($filename, 550, 550, true);
-		}	
-		echo file_get_contents($filename);
-		exit(0);
+		}
+		show_image($filename);
 	}
 
 } else { // images out of the BBS
@@ -49,6 +47,12 @@ if (preg_match('/^http:\/\/bbs\.nju\.edu\.cn/', $url)) {
 
 function get_filename($url) {
 	return CACHE_DIR . str_replace('/', '-', substr($url, 27));
+}
+
+function show_image($filename) {
+	header('Content-Length: ' . filesize($filename));
+	echo file_get_contents($filename);
+	exit(0);
 }
 
 function fetch_bbs_image($url) {
